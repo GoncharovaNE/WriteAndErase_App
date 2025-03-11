@@ -7,4 +7,41 @@
   </Design.PreviewWith>
 
   <!-- Add Styles Here -->
+	<Style Selector="TextBlock">
+		<Setter Property="FontFamily" Value="Comic Sans MS"></Setter>
+	</Style>
+	<Style Selector="Image.Logo">
+		<Setter Property="HorizontalAlignment" Value="Center"></Setter>
+		<Setter Property="Height" Value="100"></Setter>
+		<Setter Property="Width" Value="100"></Setter>
+		<Setter Property="Margin" Value="0 10 0 0"></Setter>
+	</Style>
+
+	<Style Selector="TextBlock.Auth">
+		<Setter Property="HorizontalAlignment" Value="Center"></Setter>
+		<Setter Property="FontSize" Value="20"></Setter>
+		<Setter Property="FontWeight" Value="Bold"></Setter>
+	</Style>
+
+	<Style Selector="TextBlock.Head">
+		<Setter Property="HorizontalAlignment" Value="Left"></Setter>
+		<Setter Property="FontSize" Value="15"></Setter>
+		<Setter Property="FontWeight" Value="DemiBold"></Setter>
+		<Setter Property="Margin" Value="0 10 0 10"></Setter>
+	</Style>
+
+	<Style Selector="TextBox.Input">
+		<Setter Property="FontSize" Value="15"></Setter>
+		<Setter Property="BorderBrush" Value="#498c51"></Setter>
+		<Setter Property="BorderThickness" Value="2"></Setter>
+	</Style>
+
+	<Style Selector="Button.BTMain">
+		<Setter Property="FontSize" Value="15"></Setter>
+		<Setter Property="BorderBrush" Value="#498c51"></Setter>
+		<Setter Property="BorderThickness" Value="2"></Setter>
+		<Setter Property="Background" Value="#76e383"></Setter>
+		<Setter Property="HorizontalAlignment" Value="Center"></Setter>
+		<Setter Property="FontWeight" Value="DemiBold"></Setter>
+	</Style>
 </Styles>

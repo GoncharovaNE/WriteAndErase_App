@@ -6,9 +6,9 @@ namespace WriteAndErase_App.ViewModels
 {
     public class MainWindowViewModel : ViewModelBase
     {
-        public MainWindowViewModel Instance;
+        public static MainWindowViewModel Instance;
 
-        public PostgresContext myСonnection = new PostgresContext();
+        public static PostgresContext myСonnection = new PostgresContext();
 
         public MainWindowViewModel()
         {

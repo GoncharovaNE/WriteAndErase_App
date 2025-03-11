@@ -4,9 +4,31 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             x:Class="WriteAndErase_App.AuthorizationPage">
+             x:Class="WriteAndErase_App.AuthorizationPage"
+			 x:DataType="vm:AuthorizationVM">
 
-	<Grid>
-		
+	<Grid RowDefinitions="Auto,Auto,Auto,*">
+		<StackPanel Grid.Row="0" HorizontalAlignment="Center">
+			<Image Classes="Logo" Source="avares://WriteAndErase_App/Assets/logo.png"></Image>
+			<TextBlock Classes="Auth" Text="Авторизация"></TextBlock>
+		</StackPanel>
+
+		<StackPanel Grid.Row="1" Width="300" Margin="10">
+			<TextBlock Classes="Head" Text="Введите логин"></TextBlock>
+			<TextBox Classes="Input" Text="{Binding Login}" IsEnabled="{Binding TextBoxIsEnable}"></TextBox>
+			<TextBlock Classes="Head" Text="Введите пароль"></TextBlock>
+			<TextBox Classes="Input" Text="{Binding Password}" IsEnabled="{Binding TextBoxIsEnable}"></TextBox>
+		</StackPanel>
+
+		<StackPanel Grid.Row="2" Width="300">
+			<UserControl Content="{Binding Captcha}" Margin="0 10 0 10"></UserControl>
+			<TextBox Classes="Input" Text="{Binding Kod}" IsVisible="{Binding TextBoxVisible}" Margin="0 0 0 10"></TextBox>
+			<Button Classes="BTMain" Command="{Binding CheckKod}" IsVisible="{Binding ButtonVisibleCheckedCaptchaKod}">Проверить</Button>
+		</StackPanel>
+
+		<StackPanel Grid.Row="3" HorizontalAlignment="Center" Margin="0 10 0 0">
+			<Button Classes="BTMain" Command="{Binding ToAuthComplete}" IsVisible="{Binding ButtonVisibleAuth}" Content="Авторизоваться" Margin="0 0 0 10"></Button>
+			<Button Classes="BTMain" Command="{Binding ToProductPage}" Content="Просмотреть список товаров"></Button>
+		</StackPanel>
 	</Grid>
 </UserControl>
