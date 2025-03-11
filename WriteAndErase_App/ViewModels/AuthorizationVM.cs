@@ -172,7 +172,7 @@ namespace WriteAndErase_App.ViewModels
 
                 KodList.Add(number.Text);
 
-                if (rnd.Next(2) == 0) number.FontStyle = FontStyle.Normal;
+                if (rnd.Next(2) == 0) number.TextDecorations = TextDecorations.Strikethrough;
                 else if (rnd.Next(2) == 1) number.FontStyle = FontStyle.Italic;
                 else if (rnd.Next(2) == 2) number.FontWeight = FontWeight.Bold;
 
@@ -189,7 +189,7 @@ namespace WriteAndErase_App.ViewModels
 
                 KodList.Add(letter.Text);
 
-                if (rnd.Next(3) == 0) letter.FontStyle = FontStyle.Normal;
+                if (rnd.Next(3) == 0) letter.TextDecorations = TextDecorations.Strikethrough;
                 else if (rnd.Next(3) == 1) letter.FontStyle = FontStyle.Italic;
                 else if (rnd.Next(3) == 2) letter.FontWeight = FontWeight.Bold;
 
@@ -213,6 +213,7 @@ namespace WriteAndErase_App.ViewModels
             TextBoxVisible = true;
             ButtonVisibleCheckedCaptchaKod = true;
         }
+
         #endregion
 
         public void CheckKod()
