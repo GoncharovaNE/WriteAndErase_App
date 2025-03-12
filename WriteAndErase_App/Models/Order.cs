@@ -9,19 +9,19 @@ public partial class Order
 
     public int Orderstatus { get; set; }
 
-    public DateTime Orderdate { get; set; }
+    public DateOnly Orderdate { get; set; }
 
-    public DateTime Orderdeliverydate { get; set; }
+    public DateOnly? Orderdeliverydate { get; set; }
 
-    public int Orderpickuppoint { get; set; }
+    public int? Orderpickuppoint { get; set; }
 
     public int Orderclient { get; set; }
 
-    public int Ordercodetoreceive { get; set; }
+    public int? Ordercodetoreceive { get; set; }
 
     public virtual User OrderclientNavigation { get; set; } = null!;
 
-    public virtual Pickuppoint OrderpickuppointNavigation { get; set; } = null!;
+    public virtual Pickuppoint? OrderpickuppointNavigation { get; set; }
 
     public virtual ICollection<Orderproduct> Orderproducts { get; set; } = new List<Orderproduct>();
 

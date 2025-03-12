@@ -10,6 +10,7 @@
 	<Style Selector="TextBlock">
 		<Setter Property="FontFamily" Value="Comic Sans MS"></Setter>
 	</Style>
+	
 	<Style Selector="Image.Logo">
 		<Setter Property="HorizontalAlignment" Value="Center"></Setter>
 		<Setter Property="Height" Value="100"></Setter>
@@ -30,18 +31,66 @@
 		<Setter Property="Margin" Value="0 10 0 10"></Setter>
 	</Style>
 
+	<Style Selector="TextBlock.HeadProd">
+		<Setter Property="FontWeight" Value="Bold"></Setter>
+	</Style>
+
+	<Style Selector="TextBlock.Dis">
+		<Setter Property="FontWeight" Value="Bold"></Setter>
+		<Setter Property="TextAlignment" Value="Center"></Setter>
+		<Setter Property="TextWrapping" Value="WrapWithOverflow"></Setter>
+		<Setter Property="HorizontalAlignment" Value="Center"></Setter>
+		<Setter Property="VerticalAlignment" Value="Center"></Setter>
+	</Style>
+
 	<Style Selector="TextBox.Input">
 		<Setter Property="FontSize" Value="15"></Setter>
 		<Setter Property="BorderBrush" Value="#498c51"></Setter>
-		<Setter Property="BorderThickness" Value="2"></Setter>
+		<Setter Property="BorderThickness" Value="3"></Setter>
 	</Style>
 
+	<Style Selector="TextBox.Search">
+		<Setter Property="FontSize" Value="15"></Setter>
+		<Setter Property="BorderBrush" Value="#498c51"></Setter>
+		<Setter Property="BorderThickness" Value="3"></Setter>
+		<Setter Property="Width" Value="300"></Setter>
+		<Setter Property="Margin" Value="10"></Setter>
+	</Style>
+
+	<Style Selector="TextBlock.InfoSearch">
+		<Setter Property="FontSize" Value="20"></Setter>
+		<Setter Property="FontStyle" Value="Italic"></Setter>
+		<Setter Property="Foreground" Value="#76e383"></Setter>
+		<Setter Property="Margin" Value="10 10 0 10"></Setter>
+		<Setter Property="HorizontalAlignment" Value="Center"></Setter>
+		<Setter Property="VerticalAlignment" Value="Center"></Setter>
+		<Setter Property="FontWeight" Value="DemiBold"></Setter>
+	</Style>
+
+	<Style Selector="ComboBox.ChoiceSort">
+		<Setter Property="FontSize" Value="15"></Setter>
+		<Setter Property="BorderBrush" Value="#498c51"></Setter>
+		<Setter Property="BorderThickness" Value="3"></Setter>
+		<Setter Property="Width" Value="300"></Setter>
+		<Setter Property="Margin" Value="10"></Setter>
+	</Style>
+	
 	<Style Selector="Button.BTMain">
 		<Setter Property="FontSize" Value="15"></Setter>
 		<Setter Property="BorderBrush" Value="#498c51"></Setter>
-		<Setter Property="BorderThickness" Value="2"></Setter>
+		<Setter Property="BorderThickness" Value="3"></Setter>
 		<Setter Property="Background" Value="#76e383"></Setter>
 		<Setter Property="HorizontalAlignment" Value="Center"></Setter>
 		<Setter Property="FontWeight" Value="DemiBold"></Setter>
+	</Style>
+
+	<Style Selector="Button.BTMain:pointerover /template/ ContentPresenter">
+		<Setter Property="BorderBrush" Value="#498c51"></Setter>
+		<Setter Property="Background" Value="#498c51"></Setter>
+	</Style>
+
+	<Style Selector="Border.BRProd">
+		<Setter Property="BorderBrush" Value="#498c51"></Setter>
+		<Setter Property="BorderThickness" Value="3"></Setter>
 	</Style>
 </Styles>

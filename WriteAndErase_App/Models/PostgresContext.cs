@@ -82,12 +82,8 @@ public partial class PostgresContext : DbContext
                 .HasDefaultValue(1)
                 .HasColumnName("orderclient");
             entity.Property(e => e.Ordercodetoreceive).HasColumnName("ordercodetoreceive");
-            entity.Property(e => e.Orderdate)
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("orderdate");
-            entity.Property(e => e.Orderdeliverydate)
-                .HasColumnType("timestamp without time zone")
-                .HasColumnName("orderdeliverydate");
+            entity.Property(e => e.Orderdate).HasColumnName("orderdate");
+            entity.Property(e => e.Orderdeliverydate).HasColumnName("orderdeliverydate");
             entity.Property(e => e.Orderpickuppoint).HasColumnName("orderpickuppoint");
             entity.Property(e => e.Orderstatus).HasColumnName("orderstatus");
 
@@ -98,13 +94,12 @@ public partial class PostgresContext : DbContext
 
             entity.HasOne(d => d.OrderpickuppointNavigation).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.Orderpickuppoint)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("orderpickuppoint_fk");
 
             entity.HasOne(d => d.OrderstatusNavigation).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.Orderstatus)
                 .OnDelete(DeleteBehavior.ClientSetNull)
-                .HasConstraintName("userrole_fk");
+                .HasConstraintName("orderstatus_fk");
         });
 
         modelBuilder.Entity<Orderproduct>(entity =>
@@ -153,9 +148,7 @@ public partial class PostgresContext : DbContext
                 .HasMaxLength(100)
                 .HasColumnName("productarticlenumber");
             entity.Property(e => e.Productcategory).HasColumnName("productcategory");
-            entity.Property(e => e.Productcost)
-                .HasPrecision(19, 4)
-                .HasColumnName("productcost");
+            entity.Property(e => e.Productcost).HasColumnName("productcost");
             entity.Property(e => e.Productdescription)
                 .HasColumnType("character varying")
                 .HasColumnName("productdescription");

@@ -18,5 +18,7 @@ namespace WriteAndErase_App.ViewModels
         private UserControl _contentPage = new AuthorizationPage();
 
         public UserControl ContentPage { get => _contentPage; set => this.RaiseAndSetIfChanged(ref _contentPage, value); }
+
+        //Scaffold-DbContext "Host=localhost;Port=5433;Database=postgres;Username=postgres;Password=123456" -f -o Models Npgsql.EntityFrameworkCore.PostgreSQL
     }
 }

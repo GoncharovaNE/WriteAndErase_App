@@ -3,25 +3,88 @@
 			 xmlns:vm="using:WriteAndErase_App.ViewModels"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="800"
              x:Class="WriteAndErase_App.ProductPage"
-			 x:DataType="vm:ProductVM">
-	<Grid RowDefinitions="Auto,*">
+			 x:DataType="vm:ProductVM"
+			 xmlns:conv="using:WriteAndErase_App.Converters">
+	
+	<UserControl.Resources>
+		<conv:ImageConverter x:Key="ImageConverter"></conv:ImageConverter>
+	</UserControl.Resources>
+	
+	<Grid RowDefinitions="Auto,*,10">
 		<StackPanel Grid.Row="0">
-			<StackPanel Orientation="Horizontal">
-				<Button Classes="BTMain" Content="На страницу входа" Margin="10 10 0 0" Command="{Binding ToBackAuth}"></Button>
-				<TextBlock Classes="Auth" Text="{Binding User}" Margin="10 10 0 0"></TextBlock>
+			<Grid>
+				<TextBlock Grid.Column="0" Classes="HeadProd" Margin="5 10 0 0" HorizontalAlignment="Left">
+				    <TextBlock.Text>
+				        <MultiBinding StringFormat="{} {0} из {1}">
+				            <Binding Path="CountItemsList"/>
+				            <Binding Path="CountItemsDB"/>
+				        </MultiBinding>
+				    </TextBlock.Text>
+				</TextBlock>
+
+				<StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+				    <TextBlock Classes="Auth" Text="{Binding User}" Margin="0 10 10 0"/>
+				    <Button Classes="BTMain" Content="Выйти из профиля" Margin="0 10 10 0" Command="{Binding ToBackAuth}"/>
+				</StackPanel>
+			</Grid>
+			
+			<StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+				<TextBox Classes="Search" Watermark="Поиск" Text="{Binding Search}"></TextBox>
+				
+				<ComboBox SelectedIndex="{Binding SelectedSort}" Classes="ChoiceSort">
+					<ComboBoxItem>Без сортировки</ComboBoxItem>
+					<ComboBoxItem>По возрастанию стоимости</ComboBoxItem>
+					<ComboBoxItem>По убыванию стоимости</ComboBoxItem>
+				</ComboBox>
+				
+				<ComboBox SelectedIndex="{Binding SelectedFilter}" Classes="ChoiceSort">
+					<ComboBoxItem>Все диапазоны</ComboBoxItem>
+					<ComboBoxItem>от 0 до 9,99%</ComboBoxItem>
+					<ComboBoxItem>от 10% до 14,99%</ComboBoxItem>
+					<ComboBoxItem>от 15% и более</ComboBoxItem>
+				</ComboBox>
 			</StackPanel>
+			<!--<Button Classes="BTMain" HorizontalAlignment="Left" Content="Просмотреть заказ" Margin="10 0 0 0" Command="{Binding ToBackAuth}" IsVisible=""/>-->
+		<TextBlock Classes="InfoSearch" Text="Результаты не найдены" IsVisible="{Binding NoResults}"/>
 		</StackPanel>
 
 		<ScrollViewer Grid.Row="1">
-			<ListBox Background="Transparent">
+			<ListBox Background="Transparent" ItemsSource="{Binding ListProduct}">
 				<ListBox.ItemTemplate>
 					<DataTemplate>
-						<Border>
+						<Border Classes="BRProd" Padding="10">
 							<StackPanel>
-								
+							<Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto">
+								<Border Classes="BRProd" Padding="5" Width="140" Height="140" VerticalAlignment="Center">
+									<Image Source="{Binding Productphoto ,Converter={StaticResource ImageConverter}}"></Image>
+								</Border>
+
+								<StackPanel Grid.Column="1" Margin="10 0 10 0">
+									<TextBlock Classes="HeadProd" Text="{Binding Productname}"/>
+									<TextBlock Text="{Binding Productdescription}" TextWrapping="WrapWithOverflow"/>
+									<TextBlock Classes="HeadProd" Text="Производитель (и):"/>
+									<TextBlock Text="{Binding ManufacturerNames}" TextWrapping="WrapWithOverflow"/>
+									<TextBlock Classes="HeadProd" Text="Цена:"/>
+									<StackPanel Orientation="Horizontal">
+										<TextBlock Text="{Binding Productcost, StringFormat='{}{0}₽'}" Margin="0 0 10 0" 
+												   IsVisible="{Binding IsVisCostWithDis}" TextDecorations="Strikethrough"/>
+										<TextBlock Text="{Binding DiscountWithDis}"/>
+									</StackPanel>									
+								</StackPanel>
+
+								<Border Classes="BRProd" Width="80" Height="140" Grid.Column="2" VerticalAlignment="Center" Background="{Binding Color}">
+									<TextBlock Classes="Dis" Text="{Binding DiscountIsOrNot}"/>
+								</Border>
+							</Grid>
 							</StackPanel>
+							
+						<Border.ContextMenu>
+						    <ContextMenu>
+						        <MenuItem Header="Добавить к заказу" Command="{Binding }}" CommandParameter="{Binding}" />
+						    </ContextMenu>
+						</Border.ContextMenu>
 						</Border>
 					</DataTemplate>
 				</ListBox.ItemTemplate>

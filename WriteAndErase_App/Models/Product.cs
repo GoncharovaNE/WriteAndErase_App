@@ -11,13 +11,13 @@ public partial class Product
 
     public int Productunitofmeasurement { get; set; }
 
-    public decimal Productcost { get; set; }
+    public float Productcost { get; set; }
 
     public short? Productmaximumpossiblediscountamount { get; set; }
 
     public int Productcategory { get; set; }
 
-    public short? Productdiscountamount { get; set; }
+    public float? Productdiscountamount { get; set; }
 
     public int Productquantityinstock { get; set; }
 

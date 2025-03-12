@@ -7,6 +7,12 @@ namespace WriteAndErase_App;
 
 public partial class ProductPage : UserControl
 {
+    public ProductPage()
+    {
+        InitializeComponent();
+        DataContext = new ProductVM();
+    }
+
     public ProductPage(int id)
     {
         InitializeComponent();
