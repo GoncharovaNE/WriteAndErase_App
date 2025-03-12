@@ -47,7 +47,7 @@
 				</ComboBox>
 			</StackPanel>
 			<!--<Button Classes="BTMain" HorizontalAlignment="Left" Content="Просмотреть заказ" Margin="10 0 0 0" Command="{Binding ToBackAuth}" IsVisible=""/>-->
-		<TextBlock Classes="InfoSearch" Text="Результаты не найдены" IsVisible="{Binding NoResults}"/>
+			<TextBlock Classes="InfoSearch" Text="Результаты не найдены" IsVisible="{Binding NoResults}"/>
 		</StackPanel>
 
 		<ScrollViewer Grid.Row="1">
