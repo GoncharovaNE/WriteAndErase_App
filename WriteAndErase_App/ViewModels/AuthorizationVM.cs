@@ -30,14 +30,6 @@ namespace WriteAndErase_App.ViewModels
 
         public string Password { get => _password; set => this.RaiseAndSetIfChanged(ref _password, value); }
 
-        private string _error;
-
-        public string Error { get => _error; set => this.RaiseAndSetIfChanged(ref _error, value); }
-
-        private bool _errorVisible;
-
-        public bool ErrorVisible { get => _errorVisible; set => this.RaiseAndSetIfChanged(ref _errorVisible, value); }
-
         bool _TextBoxEnable = true;
 
         public bool TextBoxIsEnable { get => _TextBoxEnable; set => this.RaiseAndSetIfChanged(ref _TextBoxEnable, value); }
@@ -45,9 +37,13 @@ namespace WriteAndErase_App.ViewModels
         public AuthorizationVM()
         {
             _listUser = MainWindowViewModel.myСonnection.Users.ToList();
-            _errorVisible = false;
             timer.Interval = new TimeSpan(0, 0, 10);
             timer.Tick += new EventHandler(StopTimer);
+        }
+        public void ToProductPage()
+        {
+            int id = 1;
+            MainWindowViewModel.Instance.ContentPage = new ProductPage(id);
         }
 
         public async void ToAuthComplete()
@@ -61,15 +57,11 @@ namespace WriteAndErase_App.ViewModels
             else
             {
                 string Messege = "Проверьте корректность логина и пароля!";
-                ButtonResult result1 = await MessageBoxManager.GetMessageBoxStandard("Внимание! Ошибка авторизавции!", Messege, ButtonEnum.Ok).ShowAsync();
+                ButtonResult result1 = await MessageBoxManager.GetMessageBoxStandard("Внимание! Ошибка авторизавции!", 
+                    Messege, ButtonEnum.Ok).ShowAsync();
             }
         }
 
-        public void ToProductPage()
-        {
-            int id = 1;
-            MainWindowViewModel.Instance.ContentPage = new ProductPage(id);
-        }
 
         private void CheckAuth(string login, string password, ref int id)
         {
@@ -218,7 +210,8 @@ namespace WriteAndErase_App.ViewModels
 
         public void CheckKod()
         {
-            if (Kod == String.Join("", KodList) && Kod != "" && Login != "" && _listUser.Any(x => x.Userlogin == Login) && Password != "" && _listUser.Any(x => x.Userpassword == Password))
+            if (Kod == String.Join("", KodList) && Kod != "" && Login != "" && _listUser.Any(x => x.Userlogin == Login) 
+                && Password != "" && _listUser.Any(x => x.Userpassword == Password))
             {
                 TextBoxVisible = false;
                 ButtonVisibleCheckedCaptchaKod = false;
@@ -227,7 +220,8 @@ namespace WriteAndErase_App.ViewModels
                 KodList.Clear();
                 ToAuthComplete();
             }
-            else if (Kod != String.Join("", KodList) || Kod != "" || Password == "" || Login == "" || _listUser.Any(x => x.Userlogin != Login) || _listUser.Any(x => x.Userpassword == Password))
+            else if (Kod != String.Join("", KodList) || Kod != "" || Password == "" || Login == "" || _listUser.Any(x => x.Userlogin != Login) 
+                || _listUser.Any(x => x.Userpassword == Password))
             {
                 StartTimer();
             }
