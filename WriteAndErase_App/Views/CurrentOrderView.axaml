@@ -7,5 +7,74 @@
              x:Class="WriteAndErase_App.CurrentOrderView"
 			 x:DataType="vm:CurrentOrderVM"
 			 xmlns:conv="using:WriteAndErase_App.Converters">
-  
+
+	<UserControl.Resources>
+		<conv:ImageConverter x:Key="ImageConverter"></conv:ImageConverter>
+	</UserControl.Resources>
+
+	<Grid RowDefinitions="Auto,*,10">
+
+		<StackPanel Grid.Row="0">
+			<Grid>
+				<TextBlock Grid.Column="0" Classes="HeadProd" Margin="5 15 0 0" HorizontalAlignment="Left">
+					Текущий заказ</TextBlock>
+
+				<StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+					<TextBlock Classes="Auth" Text="{Binding User}" Margin="0 10 10 0"/>
+					<Button Classes="BTMain" Content="Назад" Margin="0 10 10 0" Command="{Binding ToBackProduct}" CommandParameter="{Binding}"/>
+				</StackPanel>
+			</Grid>
+
+			<StackPanel Margin="10 0 0 0" HorizontalAlignment="Left">
+				<TextBlock FontSize="15" Text="{Binding OrderCode, StringFormat='Код заказа: {0}'}" Margin="0 0 10 0"/>
+				<TextBlock FontSize="15" Text="{Binding OrderDate, StringFormat='Дата заказа: {0}'}" Margin="0 0 10 0"/>
+				<TextBlock FontSize="15" Text="{Binding DeliveryTime, StringFormat='Время доставки заказа: {0}'}" Margin="0 0 10 0"/>
+				<TextBlock FontSize="15" Text="{Binding OrderDateDelivery, StringFormat='Дата доставки: {0}'}" Margin="0 0 10 0"/>				
+				<TextBlock FontSize="15" Text="{Binding OrderSum, StringFormat='Сумма заказа: {0}₽'}" Margin="0 0 10 0"/>
+				<TextBlock FontSize="15" Text="{Binding OrderDiscount, StringFormat='Сумма скидки заказа: {0}₽'}" Margin="0 0 10 0"/>
+				<TextBlock FontSize="15" Text="{Binding FinalOrderSum, StringFormat='Итоговая сумма заказа: {0}₽'}" Margin="0 0 10 0"/>
+				<!--<Button Classes="BTMain" Content="Сформировать заказ" Margin="0 10 0 0" Command="{Binding SaveCurrentOrder}"/>-->
+			</StackPanel>
+			<TextBlock Classes="Auth" Text="Состав заказа" Margin="10 10 0 0" HorizontalAlignment="Left"/>
+		</StackPanel>
+
+		<ScrollViewer Grid.Row="1" Margin="0 10 0 0">
+			<ListBox Background="Transparent" ItemsSource="{Binding ListCurrentOrderProducts}">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<Border Classes="BRProd" Padding="10">
+							<StackPanel>
+								<Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto">
+									<Border Classes="BRProd" Padding="5" Width="100" Height="100" VerticalAlignment="Center">
+										<Image Source="{Binding  ProductarticlenumberNavigation.Productphoto,Converter={StaticResource ImageConverter}}"></Image>
+									</Border>
+
+									<StackPanel Grid.Column="1" Margin="10 0 10 0">
+										<StackPanel Orientation="Horizontal">
+											<TextBlock FontSize="10" Classes="HeadProd" Text="{Binding ProductarticlenumberNavigation.Productname}"/>
+											<TextBlock FontSize="10" Classes="HeadProd" Text="{Binding Productquantity, StringFormat=' (Кол-во: {0} '}"/>
+											<TextBlock FontSize="10" Classes="HeadProd" Text="{Binding ProductUnitOfMeasurement, StringFormat='{}{0})'}"/>
+										</StackPanel>										
+										<TextBlock FontSize="10" Text="{Binding ProductarticlenumberNavigation.Productdescription}" TextWrapping="WrapWithOverflow"/>
+										<TextBlock FontSize="10" Classes="HeadProd" Text="Производитель (и):"/>
+										<TextBlock FontSize="10" Text="{Binding ManufacturerNamesInOrderproduct}" TextWrapping="WrapWithOverflow"/>
+										<TextBlock FontSize="10" Classes="HeadProd" Text="Цена:"/>
+										<StackPanel Orientation="Horizontal">
+											<TextBlock FontSize="10" Text="{Binding ProductarticlenumberNavigation.Productcost, StringFormat='{}{0}₽'}" Margin="0 0 10 0"
+													   IsVisible="{Binding IsVisCostWithDisInOrderproduct}" TextDecorations="Strikethrough"/>
+											<TextBlock FontSize="10" Text="{Binding CostWithDisInOrderproduct}"/>
+										</StackPanel>
+									</StackPanel>
+
+									<Border Classes="BRProd" Width="80" Height="100" Grid.Column="2" VerticalAlignment="Center" Background="{Binding ColorInOrderproduct}">
+										<TextBlock FontSize="10" Classes="Dis" Text="{Binding DiscountIsOrNotInOrderproduct}"/>
+									</Border>
+								</Grid>
+							</StackPanel>
+						</Border>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+		</ScrollViewer>
+	</Grid>	
 </UserControl>

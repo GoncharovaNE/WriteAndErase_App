@@ -34,10 +34,10 @@ create table Orders
 	OrderID serial primary key,
 	OrderStatus int not null,
 	OrderDate date not null,
-	OrderDeliveryDate date,
-	OrderPickupPoint int,
+	OrderDeliveryDate date not null,
+	OrderPickupPoint int not null,
 	OrderClient int not null DEFAULT 1,
-	OrderCodeToReceive int,
+	OrderCodeToReceive int not null,
 	constraint OrderStatus_fk foreign key (OrderStatus) references Status(StatusID),
 	constraint OrderPickupPoint_fk foreign key (OrderPickupPoint) references PickupPoint(PickupPointID),
 	constraint OrderClient_fk foreign key (OrderClient) references Users(UserID)

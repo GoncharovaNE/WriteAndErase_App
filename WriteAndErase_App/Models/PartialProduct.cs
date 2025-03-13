@@ -40,7 +40,7 @@ namespace WriteAndErase_App.Models
             }
         }
 
-        public string DiscountWithDis
+        public string CostWithDis
         {
             get
             {

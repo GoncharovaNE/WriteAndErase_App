@@ -94,6 +94,7 @@ public partial class PostgresContext : DbContext
 
             entity.HasOne(d => d.OrderpickuppointNavigation).WithMany(p => p.Orders)
                 .HasForeignKey(d => d.Orderpickuppoint)
+                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("orderpickuppoint_fk");
 
             entity.HasOne(d => d.OrderstatusNavigation).WithMany(p => p.Orders)
