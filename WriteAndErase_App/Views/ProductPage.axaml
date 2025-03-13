@@ -15,7 +15,7 @@
 	<Grid RowDefinitions="Auto,*,10">
 		<StackPanel Grid.Row="0">
 			<Grid>
-				<TextBlock Grid.Column="0" Classes="HeadProd" Margin="5 10 0 0" HorizontalAlignment="Left">
+				<TextBlock Grid.Column="0" Classes="HeadProd" Margin="5 15 0 0" HorizontalAlignment="Left">
 				    <TextBlock.Text>
 				        <MultiBinding StringFormat="{} {0} из {1}">
 				            <Binding Path="CountItemsList"/>
@@ -46,11 +46,12 @@
 					<ComboBoxItem>от 15% и более</ComboBoxItem>
 				</ComboBox>
 			</StackPanel>
-			<!--<Button Classes="BTMain" HorizontalAlignment="Left" Content="Просмотреть заказ" Margin="10 0 0 0" Command="{Binding ToBackAuth}" IsVisible=""/>-->
+			<Button Classes="BTMain" HorizontalAlignment="Left" Content="Просмотреть текущий заказ" Margin="10 0 0 0" Command="{Binding ToBackAuth}" 
+					IsVisible="{Binding IsVisibleBTCurrentOrder}"/>
 			<TextBlock Classes="InfoSearch" Text="Результаты не найдены" IsVisible="{Binding NoResults}"/>
 		</StackPanel>
 
-		<ScrollViewer Grid.Row="1">
+		<ScrollViewer Grid.Row="1" Margin="0 20 0 0">
 			<ListBox Background="Transparent" ItemsSource="{Binding ListProduct}">
 				<ListBox.ItemTemplate>
 					<DataTemplate>
@@ -82,7 +83,7 @@
 							
 						<Border.ContextMenu>
 						    <ContextMenu>
-						        <MenuItem Header="Добавить к заказу" Command="{Binding }}" CommandParameter="{Binding}" />
+						        <MenuItem Header="Добавить к заказу" Command="{Binding $parent[UserControl].((vm:ProductVM)DataContext).AddToOrder}}" CommandParameter="{Binding}" />
 						    </ContextMenu>
 						</Border.ContextMenu>
 						</Border>
