@@ -11,6 +11,10 @@ using WriteAndErase_App.Models;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
+using MigraDoc.DocumentObjectModel.Tables;
+using MigraDoc.DocumentObjectModel;
+using MigraDoc.Rendering;
+using System.IO;
 
 namespace WriteAndErase_App.ViewModels
 {
@@ -50,6 +54,14 @@ namespace WriteAndErase_App.ViewModels
         private string _deliveryTime;
         public string DeliveryTime { get => _deliveryTime; set => this.RaiseAndSetIfChanged(ref _deliveryTime, value); }
 
+        private bool _orderFormed = false;
+
+        public bool OrderFormed { get => _orderFormed; set => this.RaiseAndSetIfChanged(ref _orderFormed, value); }
+
+        private bool _ticketFormed = false;
+
+        public bool TicketFormed { get => _ticketFormed; set => this.RaiseAndSetIfChanged(ref _ticketFormed, value); }
+
         #endregion
 
         #region передача аргументов для возврата на страницу со списком товаров
@@ -83,6 +95,64 @@ namespace WriteAndErase_App.ViewModels
         public void ToBackProduct()
         {
             MainWindowViewModel.Instance.ContentPage = new ProductPage(CurrentUser.Userid, _currentOrder, IsVisibleBTCurrentOrder, IsCurrentOrder, IsForAdminMeneg);
+        }
+
+        public async void CompleteCurrentOrder()
+        {
+            if (OrderFormed != true)
+            {
+                ButtonResult result = await MessageBoxManager.GetMessageBoxStandard("Предупреждение!", "Заказ не оформлен! Вы уверены что хотите завершить текущий заказ? " +
+                    "После согласия все данные о текущем заказе будут стёрты!", ButtonEnum.YesNo).ShowAsync();
+
+                switch(result)
+                {
+                    case ButtonResult.Yes:
+                        {
+                            ClearNewOrder();
+                            MessageBoxManager.GetMessageBoxStandard("Внимание!", "Заказ не оформлен! Текущий заказ завершён!", ButtonEnum.Ok).ShowAsync();
+                            MainWindowViewModel.Instance.ContentPage = new ProductPage(CurrentUser.Userid, _currentOrder, IsVisibleBTCurrentOrder, IsCurrentOrder, IsForAdminMeneg);
+                            break;
+                        }
+
+                    case ButtonResult.No:
+                        {
+                            MessageBoxManager.GetMessageBoxStandard("Внимание!", "Заказ не оформлен! Текущий заказ не завершён!", ButtonEnum.Ok).ShowAsync();
+                            break;
+                        }
+                }
+            }
+            else if (OrderFormed == true && TicketFormed != true)
+            {
+                ButtonResult result = await MessageBoxManager.GetMessageBoxStandard("Предупреждение!", "Заказ оформлен, но не сохранён талон! Вы уверены что хотите завершить текущий заказ? " +
+                    "После согласия вы не сможете получить талон на текущий заказ!", ButtonEnum.YesNo).ShowAsync();
+
+                switch (result)
+                {
+                    case ButtonResult.Yes:
+                        {
+                            ClearNewOrder();
+                            MessageBoxManager.GetMessageBoxStandard("Внимание!", "Заказ оформлен, но не сохранён талон! Текущий заказ завершён!", ButtonEnum.Ok).ShowAsync();
+                            MainWindowViewModel.Instance.ContentPage = new ProductPage(CurrentUser.Userid, _currentOrder, IsVisibleBTCurrentOrder, IsCurrentOrder, IsForAdminMeneg);
+                            break;
+                        }
+
+                    case ButtonResult.No:
+                        {
+                            MessageBoxManager.GetMessageBoxStandard("Внимание!", "Заказ оформлен, но не сохранён талон! Текущий заказ не завершён!", ButtonEnum.Ok).ShowAsync();
+                            break;
+                        }
+                }
+            }
+            else if (OrderFormed == true && TicketFormed == true)
+            {
+                ClearNewOrder();
+                MessageBoxManager.GetMessageBoxStandard("Внимание!", "Заказ оформлен! Талон сохранён! Текущий заказ завершён!", ButtonEnum.Ok).ShowAsync();
+                MainWindowViewModel.Instance.ContentPage = new ProductPage(CurrentUser.Userid, _currentOrder, IsVisibleBTCurrentOrder, IsCurrentOrder, IsForAdminMeneg);
+            }
+            else
+            {
+                MessageBoxManager.GetMessageBoxStandard("Внимание!", "Случилась какая-то ошибка!", ButtonEnum.YesNo).ShowAsync();
+            }
         }
 
         public CurrentOrderVM()
@@ -158,11 +228,9 @@ namespace WriteAndErase_App.ViewModels
 
                     MainWindowViewModel.myСonnection.SaveChanges();
 
-                    MessageBoxManager.GetMessageBoxStandard("Успех!", "Заказ оформлен!", ButtonEnum.Ok).ShowAsync();
+                    OrderFormed = true;
 
-                    ClearNewOrder();
-
-                    MainWindowViewModel.Instance.ContentPage = new ProductPage(CurrentUser.Userid, CurrentOrder, IsVisibleBTCurrentOrder, IsCurrentOrder, IsForAdminMeneg);                    
+                    MessageBoxManager.GetMessageBoxStandard("Успех!", "Заказ оформлен!", ButtonEnum.Ok).ShowAsync();                                    
                 }
                 else
                 {
@@ -192,8 +260,91 @@ namespace WriteAndErase_App.ViewModels
             IsCurrentOrder = false;
         }
 
+        public void GenerateOrderTicket()
+        {
+            try
+            {
+                if (OrderFormed != true)
+                {
+                    MessageBoxManager.GetMessageBoxStandard("Ошибка!", "Нельзя сформировать талон, если не сформирован заказ!", ButtonEnum.Ok).ShowAsync();
+                }
+                else
+                {
+                    // Создание документа
+                    Document document = new Document();
+                    Section section = document.AddSection();
+
+                    // Заголовок
+                    Paragraph title = section.AddParagraph("ТАЛОН НА ЗАКАЗ");
+                    title.Format.Font.Size = 16;
+                    title.Format.Font.Bold = true;
+                    title.Format.SpaceAfter = "10pt";
+                    title.Format.Alignment = ParagraphAlignment.Center;
+
+                    // Информация о заказе
+                    section.AddParagraph($"Дата заказа: {OrderDate}");
+                    section.AddParagraph($"Номер заказа: {CurrentOrder.Orderid}");
+                    section.AddParagraph($"Пункт выдачи: {PickupPoint}");
+
+                    // Код получения (жирный, крупный)
+                    Paragraph orderCode = section.AddParagraph($"Код получения: {OrderCode}");
+                    orderCode.Format.Font.Size = 14;
+                    orderCode.Format.Font.Bold = true;
+                    orderCode.Format.SpaceAfter = "10pt";
+
+                    // Состав заказа
+                    section.AddParagraph("Состав заказа:");
+                    Table table = section.AddTable();
+                    table.Borders.Width = 0.5;
+
+                    Column column1 = table.AddColumn("3cm");
+                    Column column2 = table.AddColumn("7cm");
+                    Column column3 = table.AddColumn("3cm");
+
+                    Row header = table.AddRow();
+                    header.Cells[0].AddParagraph("Кол-во");
+                    header.Cells[1].AddParagraph("Название");
+                    header.Cells[2].AddParagraph("Цена");
+
+                    foreach (var product in ListCurrentOrderProducts)
+                    {
+                        Row row = table.AddRow();
+                        row.Cells[0].AddParagraph(product.Productquantity.ToString());
+                        row.Cells[1].AddParagraph(product.ProductarticlenumberNavigation.Productname);
+                        row.Cells[2].AddParagraph($"{product.ProductarticlenumberNavigation.Productcost} руб.");
+                    }
+
+                    // Итоги
+                    section.AddParagraph($"Сумма заказа: {OrderSum} руб.");
+                    section.AddParagraph($"Сумма скидки: {OrderDiscount} руб.");
+                    section.AddParagraph($"Итоговая сумма: {FinalOrderSum} руб.");
+                    section.AddParagraph($"Срок доставки: {DeliveryTime}");
+
+                    // Рендеринг в PDF
+                    PdfDocumentRenderer renderer = new PdfDocumentRenderer(true);
+                    renderer.Document = document;
+                    renderer.RenderDocument();
+
+                    // Определение пути к рабочему столу
+                    string desktopPath = Environment.GetFolderPath(Environment.SpecialFolder.Desktop);
+                    string filename = Path.Combine(desktopPath, $"Талон_заказ_{CurrentOrder.Orderid}.pdf");
+
+                    // Сохранение файла
+                    renderer.PdfDocument.Save(filename);
+
+                    TicketFormed = true;
+
+                    MessageBoxManager.GetMessageBoxStandard("Успех!", $"Талон сохранён: {filename}", ButtonEnum.Ok).ShowAsync();
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBoxManager.GetMessageBoxStandard("Ошибка!", ex.Message, ButtonEnum.Ok).ShowAsync();
+            }
+        }
+
         #region изменение наличия товара в заказе
-       
+
         private int _totalProductQuantity;
         public int TotalProductQuantity
         {

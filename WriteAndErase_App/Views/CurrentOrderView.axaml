@@ -21,11 +21,13 @@
 						Текущий заказ
 					</TextBlock>
 					<Button Classes="BTMain" Content="Сформировать заказ" Margin="10 10 0 0" Command="{Binding SaveOrderToDatabase}"/>
+					<Button Classes="BTMain" Content="Сформировать талон в PDF" Margin="10 10 0 0" Command="{Binding GenerateOrderTicket}"/>
 				</StackPanel>				
 
 				<StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
 					<TextBlock Classes="Auth" Text="{Binding User}" Margin="0 10 10 0"/>
-					<Button Classes="BTMain" Content="Назад" Margin="0 10 10 0" Command="{Binding ToBackProduct}" CommandParameter="{Binding}"/>
+					<Button Classes="BTMain" Content="Назад" Margin="0 10 10 0" Command="{Binding ToBackProduct}"/>
+					<Button Classes="BTMain" Content="Завершить текущий заказ" Margin="0 10 10 0" Command="{Binding CompleteCurrentOrder}"/>
 				</StackPanel>
 			</Grid>
 
