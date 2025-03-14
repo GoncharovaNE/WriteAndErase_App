@@ -118,7 +118,6 @@ public partial class PostgresContext : DbContext
 
             entity.HasOne(d => d.Order).WithMany(p => p.Orderproducts)
                 .HasForeignKey(d => d.Orderid)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("order_orderproduct_fk");
 
             entity.HasOne(d => d.ProductarticlenumberNavigation).WithMany(p => p.Orderproducts)
@@ -197,7 +196,6 @@ public partial class PostgresContext : DbContext
 
             entity.HasOne(d => d.ProductarticlenumberNavigation).WithMany(p => p.Productmanufacturers)
                 .HasForeignKey(d => d.Productarticlenumber)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("product_productmanufacturer_fk");
         });
 
@@ -215,7 +213,6 @@ public partial class PostgresContext : DbContext
 
             entity.HasOne(d => d.ProductarticlenumberNavigation).WithMany(p => p.Productsuppliers)
                 .HasForeignKey(d => d.Productarticlenumber)
-                .OnDelete(DeleteBehavior.ClientSetNull)
                 .HasConstraintName("product_productsupplier_fk");
 
             entity.HasOne(d => d.Supplier).WithMany(p => p.Productsuppliers)
