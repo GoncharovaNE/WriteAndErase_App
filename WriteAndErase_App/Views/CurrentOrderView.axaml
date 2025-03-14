@@ -16,8 +16,12 @@
 
 		<StackPanel Grid.Row="0">
 			<Grid>
-				<TextBlock Grid.Column="0" Classes="HeadProd" Margin="5 15 0 0" HorizontalAlignment="Left">
-					Текущий заказ</TextBlock>
+				<StackPanel Grid.Column="0" HorizontalAlignment="Left" Orientation="Horizontal">
+					<TextBlock  Classes="HeadProd" Margin="5 15 0 0" FontSize="15">
+						Текущий заказ
+					</TextBlock>
+					<Button Classes="BTMain" Content="Сформировать заказ" Margin="10 10 0 0" Command="{Binding SaveOrderToDatabase}"/>
+				</StackPanel>				
 
 				<StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
 					<TextBlock Classes="Auth" Text="{Binding User}" Margin="0 10 10 0"/>
@@ -32,8 +36,8 @@
 				<TextBlock FontSize="15" Text="{Binding OrderDateDelivery, StringFormat='Дата доставки: {0}'}" Margin="0 0 10 0"/>				
 				<TextBlock FontSize="15" Text="{Binding OrderSum, StringFormat='Сумма заказа: {0}₽'}" Margin="0 0 10 0"/>
 				<TextBlock FontSize="15" Text="{Binding OrderDiscount, StringFormat='Сумма скидки заказа: {0}₽'}" Margin="0 0 10 0"/>
-				<TextBlock FontSize="15" Text="{Binding FinalOrderSum, StringFormat='Итоговая сумма заказа: {0}₽'}" Margin="0 0 10 0"/>
-				<!--<Button Classes="BTMain" Content="Сформировать заказ" Margin="0 10 0 0" Command="{Binding SaveCurrentOrder}"/>-->
+				<TextBlock FontSize="15" Text="{Binding FinalOrderSum, StringFormat='Итоговая сумма заказа: {0}₽'}" Margin="0 0 10 0"/>				
+				<TextBlock FontSize="15" Text="{Binding PickupPoint, StringFormat='Пункт выдачи: {0}'}" Margin="0 0 10 0"/>				
 			</StackPanel>
 			<TextBlock Classes="Auth" Text="Состав заказа" Margin="10 10 0 0" HorizontalAlignment="Left"/>
 		</StackPanel>

@@ -18,9 +18,9 @@ namespace WriteAndErase_App.ViewModels
 
         public string User { get => _user; set => this.RaiseAndSetIfChanged(ref _user, value); }
 
-        private int _userId;
+        private User? _currentUser;
 
-        public int UserId { get => _userId; set => this.RaiseAndSetIfChanged(ref _userId, value); }
+        public User? CurrentUser { get => _currentUser; set => this.RaiseAndSetIfChanged(ref _currentUser, value); }
 
         private List<User> _listUser;
 
@@ -42,40 +42,29 @@ namespace WriteAndErase_App.ViewModels
 
         public ProductVM(int id)
         {
-            _userId = id;
+            _listUser = MainWindowViewModel.myСonnection.Users.ToList();
+            _currentUser = _listUser.FirstOrDefault(x => x.Userid == id);
+            _user = _currentUser?.Userid == 1 ? "Гость" : $"{_currentUser?.Username} {_currentUser?.Usersurname} {_currentUser?.Userpatronymic}";
+
             _listOrder = MainWindowViewModel.myСonnection.Orders.ToList();
             _listPickupPoint = MainWindowViewModel.myСonnection.Pickuppoints.ToList();
             
-            _listUser = MainWindowViewModel.myСonnection.Users.ToList();
-                User? userId = _listUser.FirstOrDefault(x => x.Userid == id);
-
-            _user = userId?.Userid == 1 ? "Гость" : $"{userId?.Username} {userId?.Usersurname} {userId?.Userpatronymic}";
-
             _listProduct = MainWindowViewModel.myСonnection.Products.Include(x => x.Productmanufacturers).ThenInclude(x => x.Manufacturer).ToList();
         }
 
-        public ProductVM(int id, Order currentOrder, bool IsVisibleBTCurrentOrder, bool IsEnablePickuppoint, bool IsCurrentOrder)
-        {
-            _userId = id;
+        public ProductVM(int id, Order currentOrder, bool IsVisibleBTCurrentOrder, bool IsCurrentOrder)
+        {          
+            _listUser = MainWindowViewModel.myСonnection.Users.ToList();
+            _currentUser = _listUser.FirstOrDefault(x => x.Userid == id);
+            _user = _currentUser?.Userid == 1 ? "Гость" : $"{_currentUser?.Username} {_currentUser?.Usersurname} {_currentUser?.Userpatronymic}";
+
             _listOrder = MainWindowViewModel.myСonnection.Orders.ToList();
             _listPickupPoint = MainWindowViewModel.myСonnection.Pickuppoints.ToList();
-            if (id == 1)
-            {
-                _user = "Гость";
-            }
-            else
-            {
-                _listUser = MainWindowViewModel.myСonnection.Users.ToList();
-                User? userId = _listUser.FirstOrDefault(x => x.Userid == id);
-                string fio = $"{userId?.Username} {userId?.Usersurname} {userId?.Userpatronymic}";
-                _user = $"{fio}";
-            }
 
             _listProduct = MainWindowViewModel.myСonnection.Products.Include(x => x.Productmanufacturers).ThenInclude(x => x.Manufacturer).ToList();
 
             NewOrder = currentOrder;
             _IsVisibleBTCurrentOrder = IsVisibleBTCurrentOrder;
-            _IsEnablePickuppoint = IsEnablePickuppoint;
             _IsCurrentOrder = IsCurrentOrder;
         }
 
@@ -86,7 +75,7 @@ namespace WriteAndErase_App.ViewModels
 
         public void ToCurrentOrder()
         {
-            MainWindowViewModel.Instance.ContentPage = new CurrentOrderView(NewOrder, IsVisibleBTCurrentOrder, IsEnablePickuppoint, IsCurrentOrder);
+            MainWindowViewModel.Instance.ContentPage = new CurrentOrderView(CurrentUser, NewOrder, IsVisibleBTCurrentOrder, IsCurrentOrder);
         }
 
         #region Сортировка, поиск и фильтрация
@@ -178,10 +167,6 @@ namespace WriteAndErase_App.ViewModels
 
         public bool IsCurrentOrder { get => _IsCurrentOrder; set => this.RaiseAndSetIfChanged(ref _IsCurrentOrder, value); }
 
-        private bool _IsEnablePickuppoint = true;
-
-        public bool IsEnablePickuppoint { get => _IsEnablePickuppoint; set => this.RaiseAndSetIfChanged(ref _IsEnablePickuppoint, value); }
-
         private List<Order> _listOrder;               
 
         public List<Order> ListOrder { get => _listOrder; set => this.RaiseAndSetIfChanged(ref _listOrder, value); }
@@ -222,38 +207,26 @@ namespace WriteAndErase_App.ViewModels
                     {   
                         if (NewOrder.OrderpickuppointNavigation == null)
                         {
-                            Messege = "Выберите пункт выдачи! После создания заказа пункт поменять будет нельзя!";
-                            ButtonResult result = await MessageBoxManager.GetMessageBoxStandard("Внимание! Ошибка пункта выдачи",
+                            Messege = "Выберите пункт выдачи! Заказ не создан!";
+                            ButtonResult result = await MessageBoxManager.GetMessageBoxStandard("Внимание! Ошибка пункта выдачи!",
                                 Messege, ButtonEnum.Ok).ShowAsync();
                         }
                         else
                         {
-                            Messege = "Пункт выдачи выбран! После создания заказа пункт поменять будет нельзя!";
-                            ButtonResult result = await MessageBoxManager.GetMessageBoxStandard("Внимание! Выбор пункта выдачи",
+                            Messege = "Пункт выдачи выбран! Заказ создан!";
+                            ButtonResult result = await MessageBoxManager.GetMessageBoxStandard("Внимание! Выбор пункта выдачи!",
                                 Messege, ButtonEnum.Ok).ShowAsync();
 
                             if (NewOrder.Orderid == 0)
                             {
-                                MainWindowViewModel.myСonnection.Orders.Add(NewOrder);
+                                NewOrder.Orderstatus = 1;
+                                NewOrder.Orderdate = DateOnly.FromDateTime(DateTime.Now);
+                                NewOrder.Orderclient = _currentUser.Userid;
+                                NewOrder.Ordercodetoreceive = GenerateUniqueOrderCode();
+                                NewOrder.Orderproducts = new List<Orderproduct>();
                             }
-                            NewOrder.Orderstatus = 1;
-                            NewOrder.Orderdate = DateOnly.FromDateTime(DateTime.Now);
-                            NewOrder.Orderclient = _userId;
-                            NewOrder.Ordercodetoreceive = GenerateUniqueOrderCode();
-
-                            if (NewOrder.Orderproducts.Any(x => x.ProductarticlenumberNavigation.Productquantityinstock < 3))
-                            {
-                                NewOrder.Orderdeliverydate = DateOnly.FromDateTime(DateTime.Now.AddDays(6));
-                            }
-                            else
-                            {
-                                NewOrder.Orderdeliverydate = DateOnly.FromDateTime(DateTime.Now.AddDays(3));
-                            }
-
-                            MainWindowViewModel.myСonnection.SaveChanges();
-
+                            
                             IsCurrentOrder = true;
-                            IsEnablePickuppoint = false;
 
                             Messege = "Новый заказ создан!";
                             result = await MessageBoxManager.GetMessageBoxStandard("Создание заказа!",
@@ -270,16 +243,15 @@ namespace WriteAndErase_App.ViewModels
                     }
                 }
 
-                if (_IsEnablePickuppoint == true)
+                if (NewOrder.OrderpickuppointNavigation == null)
                 {
-                    Messege = $"Заказ не создан! Товар '{product.Productname}' не добавлен в заказ!";
-                    ButtonResult result1 = await MessageBoxManager.GetMessageBoxStandard("Внимание! Ошибка создания заказа!",
+                    Messege = "Выберите пункт выдачи! Товар не добавлен, так как заказ не создан!";
+                    ButtonResult result = await MessageBoxManager.GetMessageBoxStandard("Внимание! Ошибка пункта выдачи!",
                         Messege, ButtonEnum.Ok).ShowAsync();
                 }
                 else
                 {
-                    Orderproduct? existingOrderProduct = MainWindowViewModel.myСonnection.Orderproducts
-                   .FirstOrDefault(x => x.Orderid == NewOrder.Orderid && x.Productarticlenumber == product.Productarticlenumber);
+                    Orderproduct? existingOrderProduct = NewOrder.Orderproducts.FirstOrDefault(x => x.Productarticlenumber == product.Productarticlenumber);
 
                     if (existingOrderProduct != null)
                     {
@@ -287,23 +259,29 @@ namespace WriteAndErase_App.ViewModels
                     }
                     else
                     {
-                        Orderproduct NewOrderProduct = new Orderproduct();
-                        NewOrderProduct.Orderid = NewOrder.Orderid;
-                        NewOrderProduct.Productarticlenumber = product.Productarticlenumber;
-                        NewOrderProduct.Productquantity = 1;
-
-                        MainWindowViewModel.myСonnection.Orderproducts.Add(NewOrderProduct);
+                        NewOrder.Orderproducts.Add(new Orderproduct
+                        {
+                            Orderid = NewOrder.Orderid,
+                            Productarticlenumber = product.Productarticlenumber,
+                            Productquantity = 1
+                        });
                     }
 
-                    MainWindowViewModel.myСonnection.SaveChanges();
+                    IsVisibleBTCurrentOrder = NewOrder.Orderproducts.Any(x => x.Productquantity > 0);
 
-                    IsVisibleBTCurrentOrder = MainWindowViewModel.myСonnection.Orderproducts
-                        .Any(x => x.Orderid == NewOrder.Orderid && x.Productquantity > 0);
+                    if (NewOrder.Orderproducts.Any(x => x.Productarticlenumber == product.Productarticlenumber &&  product.Productquantityinstock < 3))
+                    {
+                        NewOrder.Orderdeliverydate = DateOnly.FromDateTime(DateTime.Now.AddDays(6));
+                    }
+                    else
+                    {
+                        NewOrder.Orderdeliverydate = DateOnly.FromDateTime(DateTime.Now.AddDays(3));
+                    }
 
                     Messege = $"Товар '{product.Productname}' добавлен в текущий заказ!";
                     ButtonResult result1 = await MessageBoxManager.GetMessageBoxStandard("Добавление товара к заказу!",
                         Messege, ButtonEnum.Ok).ShowAsync();
-                }               
+                }            
             }
             catch (DbUpdateException dbEx)
             {

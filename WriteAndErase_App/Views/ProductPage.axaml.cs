@@ -20,9 +20,9 @@ public partial class ProductPage : UserControl
         DataContext = new ProductVM(id);
     }
 
-    public ProductPage(int id, Order currentOrder, bool IsVisibleBTCurrentOrder, bool IsEnablePickuppoint, bool IsCurrentOrder)
+    public ProductPage(int id, Order currentOrder, bool IsVisibleBTCurrentOrder, bool IsCurrentOrder)
     {
         InitializeComponent();
-        DataContext = new ProductVM(id, currentOrder, IsVisibleBTCurrentOrder, IsEnablePickuppoint, IsCurrentOrder);
+        DataContext = new ProductVM(id, currentOrder, IsVisibleBTCurrentOrder, IsCurrentOrder);
     }
 }

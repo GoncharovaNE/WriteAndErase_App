@@ -50,7 +50,7 @@
 			<StackPanel Orientation="Horizontal">
 				<ComboBox Classes="ChoiceSort" PlaceholderText="Выберите пункт выдачи:" Margin="10 0 10 0"
 						  ItemsSource="{Binding ListPickupPoint}" SelectedItem="{Binding NewOrder.OrderpickuppointNavigation}" Width="400"
-						  IsEnabled="{Binding IsEnablePickuppoint}">
+						  >
 					<ComboBox.ItemTemplate>
 						<DataTemplate>
 							<TextBlock Text="{Binding Pickuppointname}"></TextBlock>

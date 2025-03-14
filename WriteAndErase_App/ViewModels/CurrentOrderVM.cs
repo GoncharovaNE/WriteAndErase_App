@@ -1,4 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using MsBox.Avalonia.Enums;
+using MsBox.Avalonia;
 using ReactiveUI;
 using System;
 using System.Collections.Generic;
@@ -41,6 +43,10 @@ namespace WriteAndErase_App.ViewModels
 
         #region передача аргументов для возврата на страницу со списком товаров
 
+        private User? _currentUser;
+
+        public User? CurrentUser { get => _currentUser; set => this.RaiseAndSetIfChanged(ref _currentUser, value); }
+
         private string _user;
 
         public string User { get => _user; set => this.RaiseAndSetIfChanged(ref _user, value); }
@@ -48,10 +54,6 @@ namespace WriteAndErase_App.ViewModels
         private bool _IsVisibleBTCurrentOrder = false;
 
         public bool IsVisibleBTCurrentOrder { get => _IsVisibleBTCurrentOrder; set => this.RaiseAndSetIfChanged(ref _IsVisibleBTCurrentOrder, value); }
-        
-        private bool _IsEnablePickuppoint = true;
-
-        public bool IsEnablePickuppoint { get => _IsEnablePickuppoint; set => this.RaiseAndSetIfChanged(ref _IsEnablePickuppoint, value); }
 
         private bool _IsCurrentOrder;
 
@@ -65,11 +67,7 @@ namespace WriteAndErase_App.ViewModels
 
         public void ToBackProduct()
         {
-            User? userId = _listCurrentOrderProducts
-                    .Select(x => x.Order.OrderclientNavigation)
-                    .FirstOrDefault();
-
-            MainWindowViewModel.Instance.ContentPage = new ProductPage(userId.Userid, _currentOrder, IsVisibleBTCurrentOrder, IsEnablePickuppoint, IsCurrentOrder);
+            MainWindowViewModel.Instance.ContentPage = new ProductPage(CurrentUser.Userid, _currentOrder, IsVisibleBTCurrentOrder, IsCurrentOrder);
         }
 
         public CurrentOrderVM()
@@ -77,25 +75,31 @@ namespace WriteAndErase_App.ViewModels
 
         }
 
-        public CurrentOrderVM(Order currentOrder, bool IsVisibleBTCurrentOrder, bool IsEnablePickuppoint, bool IsCurrentOrder)
+        public CurrentOrderVM(User CurrentUser, Order newOrder, bool IsVisibleBTCurrentOrder, bool IsCurrentOrder)
         {
+             _listCurrentOrderProducts = newOrder.Orderproducts
+            .Select(op => new Orderproduct
+            {
+                Productarticlenumber = op.Productarticlenumber,
+                Productquantity = op.Productquantity,
+                Order = newOrder,
+                ProductarticlenumberNavigation = MainWindowViewModel.myСonnection.Products
+                    .Include(p => p.ProductunitofmeasurementNavigation)
+                    .FirstOrDefault(p => p.Productarticlenumber == op.Productarticlenumber)
+            })
+            .ToList();
 
-            _listCurrentOrderProducts = MainWindowViewModel.myСonnection.Orderproducts
-                                                                         .Where(x => x.Orderid == currentOrder.Orderid)
-                                                                         .Include(x => x.Order)
-                                                                         .Include(x => x.ProductarticlenumberNavigation)
-                                                                         .ThenInclude(x => x.ProductunitofmeasurementNavigation)
-                                                                         .ToList();
+            _currentOrder = newOrder;
 
-            _currentOrder = currentOrder;
+            _currentUser = CurrentUser;
 
-            OrderDate = currentOrder.Orderdate.ToString("dd.MM.yyyy");
+            OrderDate = newOrder.Orderdate.ToString("dd.MM.yyyy");
 
-            OrderDateDelivery = currentOrder.Orderdeliverydate.ToString("dd.MM.yyyy");
+            OrderDateDelivery = newOrder.Orderdeliverydate.ToString("dd.MM.yyyy");
 
-            OrderCode = currentOrder.Ordercodetoreceive;
+            OrderCode = newOrder.Ordercodetoreceive;
 
-            PickupPoint = currentOrder.OrderpickuppointNavigation.Pickuppointname;
+            PickupPoint = newOrder.OrderpickuppointNavigation.Pickuppointname;
 
             OrderSum = _listCurrentOrderProducts.Sum(x => x.ProductarticlenumberNavigation.Productcost * x.Productquantity);
 
@@ -107,15 +111,63 @@ namespace WriteAndErase_App.ViewModels
             bool availableProducts = _listCurrentOrderProducts.Any(x => x.ProductarticlenumberNavigation.Productquantityinstock < 3);
             DeliveryTime = availableProducts == true ? "6 дней" : "3 дня";
 
-            User? userId = _listCurrentOrderProducts
-                   .Select(x => x.Order.OrderclientNavigation)
-                   .FirstOrDefault();
-
-            _user = userId?.Userid == 1 ? "Гость" : $"{userId?.Username} {userId?.Usersurname} {userId?.Userpatronymic}";
+            _user = _currentUser?.Userid == 1 ? "Гость" : $"{_currentUser?.Username} {_currentUser?.Usersurname} {_currentUser?.Userpatronymic}";
 
             _IsVisibleBTCurrentOrder = IsVisibleBTCurrentOrder;
-            _IsEnablePickuppoint = IsEnablePickuppoint;
             _IsCurrentOrder = IsCurrentOrder;
-        }        
+        }
+
+        public void SaveOrderToDatabase()
+        {
+            try
+            {
+                if (CurrentOrder.Orderproducts.Any())
+                {
+                    if (CurrentOrder.Orderid == 0)
+                    {
+                        MainWindowViewModel.myСonnection.Orders.Add(CurrentOrder);
+                    }
+
+                    foreach (Orderproduct? product in CurrentOrder.Orderproducts)
+                    {
+                        MainWindowViewModel.myСonnection.Orderproducts.Add(product);
+                    }
+
+                    MainWindowViewModel.myСonnection.SaveChanges();
+
+                    MessageBoxManager.GetMessageBoxStandard("Успех!", "Заказ оформлен!", ButtonEnum.Ok).ShowAsync();
+
+                    IsVisibleBTCurrentOrder = false;
+                    IsCurrentOrder = false;
+
+                    ClearNewOrder();
+
+                    MainWindowViewModel.Instance.ContentPage = new ProductPage(CurrentUser.Userid, CurrentOrder, IsVisibleBTCurrentOrder, IsCurrentOrder);                    
+                }
+                else
+                {
+                    MessageBoxManager.GetMessageBoxStandard("Ошибка!", "Нельзя сохранить пустой заказ!", ButtonEnum.Ok).ShowAsync();
+                }
+            }
+            catch (DbUpdateException dbEx)
+            {
+                MessageBoxManager.GetMessageBoxStandard("Ошибка!", dbEx.InnerException?.Message ?? dbEx.Message, ButtonEnum.Ok).ShowAsync();
+            }
+        }
+
+        private void ClearNewOrder()
+        {
+            CurrentOrder = new Order();
+            ListCurrentOrderProducts = new List<Orderproduct>();
+
+            OrderDate = string.Empty;
+            OrderDateDelivery = string.Empty;
+            OrderCode = 0;
+            OrderSum = 0;
+            OrderDiscount = 0;
+            FinalOrderSum = 0;
+            PickupPoint = string.Empty;
+            DeliveryTime = string.Empty;
+        }
     }
 }

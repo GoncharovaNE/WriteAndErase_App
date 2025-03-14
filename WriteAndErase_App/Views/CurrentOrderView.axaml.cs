@@ -14,9 +14,9 @@ public partial class CurrentOrderView : UserControl
         DataContext = new CurrentOrderVM();
     }
 
-    public CurrentOrderView(Order currentOrder, bool IsVisibleBTCurrentOrder, bool IsEnablePickuppoint, bool IsCurrentOrder)
+    public CurrentOrderView(User CurrentUser, Order CurrentOrder, bool IsVisibleBTCurrentOrder, bool IsCurrentOrder)
     {
         InitializeComponent();
-        DataContext = new CurrentOrderVM(currentOrder, IsVisibleBTCurrentOrder, IsEnablePickuppoint, IsCurrentOrder);
+        DataContext = new CurrentOrderVM(CurrentUser, CurrentOrder, IsVisibleBTCurrentOrder, IsCurrentOrder);
     }
 }
