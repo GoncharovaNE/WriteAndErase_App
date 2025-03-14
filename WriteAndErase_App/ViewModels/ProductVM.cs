@@ -14,6 +14,8 @@ namespace WriteAndErase_App.ViewModels
 {
     class ProductVM : ViewModelBase
     {
+        #region Свойства
+
         private string _user;
 
         public string User { get => _user; set => this.RaiseAndSetIfChanged(ref _user, value); }
@@ -34,6 +36,12 @@ namespace WriteAndErase_App.ViewModels
 
         public List<Pickuppoint> ListPickupPoint { get => _listPickupPoint; set => this.RaiseAndSetIfChanged(ref _listPickupPoint, value); }
 
+        private bool _isForAdminMeneg = false;
+
+        public bool IsForAdminMeneg { get => _isForAdminMeneg; set => this.RaiseAndSetIfChanged(ref _isForAdminMeneg, value); }
+
+        #endregion
+
         public ProductVM()
         {            
             _listProduct = MainWindowViewModel.myСonnection.Products.Include(x => x.Productmanufacturers).ThenInclude(x => x.Manufacturer).ToList();
@@ -42,7 +50,7 @@ namespace WriteAndErase_App.ViewModels
 
         public ProductVM(int id)
         {
-            _listUser = MainWindowViewModel.myСonnection.Users.ToList();
+            _listUser = MainWindowViewModel.myСonnection.Users.Include(x => x.UserroleNavigation).ToList();
             _currentUser = _listUser.FirstOrDefault(x => x.Userid == id);
             _user = _currentUser?.Userid == 1 ? "Гость" : $"{_currentUser?.Username} {_currentUser?.Usersurname} {_currentUser?.Userpatronymic}";
 
@@ -50,11 +58,13 @@ namespace WriteAndErase_App.ViewModels
             _listPickupPoint = MainWindowViewModel.myСonnection.Pickuppoints.ToList();
             
             _listProduct = MainWindowViewModel.myСonnection.Products.Include(x => x.Productmanufacturers).ThenInclude(x => x.Manufacturer).ToList();
+
+            IsForAdminMeneg = _currentUser.Userrole == 2 || _currentUser.Userrole == 3 ? true : false;
         }
 
-        public ProductVM(int id, Order currentOrder, bool IsVisibleBTCurrentOrder, bool IsCurrentOrder)
-        {          
-            _listUser = MainWindowViewModel.myСonnection.Users.ToList();
+        public ProductVM(int id, Order currentOrder, bool IsVisibleBTCurrentOrder, bool IsCurrentOrder, bool IsAdminMeneg)
+        {
+            _listUser = MainWindowViewModel.myСonnection.Users.Include(x => x.UserroleNavigation).ToList();
             _currentUser = _listUser.FirstOrDefault(x => x.Userid == id);
             _user = _currentUser?.Userid == 1 ? "Гость" : $"{_currentUser?.Username} {_currentUser?.Usersurname} {_currentUser?.Userpatronymic}";
 
@@ -66,6 +76,10 @@ namespace WriteAndErase_App.ViewModels
             NewOrder = currentOrder;
             _IsVisibleBTCurrentOrder = IsVisibleBTCurrentOrder;
             _IsCurrentOrder = IsCurrentOrder;
+
+            IsForAdminMeneg = _currentUser.Userrole == 2 || _currentUser.Userrole == 3 ? true : false;
+
+            IsForAdminMeneg = IsAdminMeneg;
         }
 
         public void ToBackAuth()
@@ -75,7 +89,12 @@ namespace WriteAndErase_App.ViewModels
 
         public void ToCurrentOrder()
         {
-            MainWindowViewModel.Instance.ContentPage = new CurrentOrderView(CurrentUser, NewOrder, IsVisibleBTCurrentOrder, IsCurrentOrder);
+            MainWindowViewModel.Instance.ContentPage = new CurrentOrderView(CurrentUser, NewOrder, IsVisibleBTCurrentOrder, IsCurrentOrder, IsForAdminMeneg);
+        }
+
+        public void ToOrderPage()
+        {
+            MainWindowViewModel.Instance.ContentPage = new OrdersPage(CurrentUser);
         }
 
         #region Сортировка, поиск и фильтрация
@@ -178,7 +197,7 @@ namespace WriteAndErase_App.ViewModels
         private bool _IsVisibleBTCurrentOrder = false;
 
         public bool IsVisibleBTCurrentOrder { get => _IsVisibleBTCurrentOrder; set => this.RaiseAndSetIfChanged(ref _IsVisibleBTCurrentOrder, value); }
-
+        
         public int GenerateUniqueOrderCode()
         {
             Random rnd = new Random();

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace WriteAndErase_App.Models
 {
     partial class Orderproduct
-    {
+    {        
         public string ProductUnitOfMeasurement
         {
             get
@@ -24,7 +24,7 @@ namespace WriteAndErase_App.Models
                     ? string.Join(", ", ProductarticlenumberNavigation.Productmanufacturers.Select(pm => pm.Manufacturer.Manufacturername))
                     : "Отсутствует";
             }
-        }
+        }               
 
         public bool IsVisCostWithDisInOrderproduct
         {

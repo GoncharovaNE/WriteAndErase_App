@@ -14,9 +14,9 @@ public partial class CurrentOrderView : UserControl
         DataContext = new CurrentOrderVM();
     }
 
-    public CurrentOrderView(User CurrentUser, Order CurrentOrder, bool IsVisibleBTCurrentOrder, bool IsCurrentOrder)
+    public CurrentOrderView(User CurrentUser, Order CurrentOrder, bool IsVisibleBTCurrentOrder, bool IsCurrentOrder, bool IsForAdminMeneg)
     {
         InitializeComponent();
-        DataContext = new CurrentOrderVM(CurrentUser, CurrentOrder, IsVisibleBTCurrentOrder, IsCurrentOrder);
+        DataContext = new CurrentOrderVM(CurrentUser, CurrentOrder, IsVisibleBTCurrentOrder, IsCurrentOrder, IsForAdminMeneg);
     }
 }

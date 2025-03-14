@@ -50,35 +50,35 @@
 						<Border Classes="BRProd" Padding="10">
 							<StackPanel>
 								<Grid ColumnDefinitions="Auto,*,Auto,Auto" RowDefinitions="Auto">
-									<Border Grid.Column="0" Classes="BRProd" Padding="5" Width="100" Height="100" VerticalAlignment="Center">
+									<Border Grid.Column="0" Classes="BRProd" Padding="5" Width="125" Height="125" VerticalAlignment="Center">
 										<Image Source="{Binding  ProductarticlenumberNavigation.Productphoto,Converter={StaticResource ImageConverter}}"></Image>
 									</Border>
 
 									<StackPanel Grid.Column="1" Margin="10 0 10 0">
 										<StackPanel Orientation="Horizontal">
-											<TextBlock FontSize="10" Classes="HeadProd" Text="{Binding ProductarticlenumberNavigation.Productname}"/>
-											<TextBlock FontSize="10" Classes="HeadProd" Text="{Binding Productquantity, StringFormat=' (Кол-во: {0} '}"/>
-											<TextBlock FontSize="10" Classes="HeadProd" Text="{Binding ProductUnitOfMeasurement, StringFormat='{} {0})'}"/>
+											<TextBlock FontSize="15" Classes="HeadProd" Text="{Binding ProductarticlenumberNavigation.Productname}"/>
+											<TextBlock FontSize="15" Classes="HeadProd" Text="{Binding Productquantity, StringFormat=' (Кол-во: {0} '}"/>
+											<TextBlock FontSize="15" Classes="HeadProd" Text="{Binding ProductUnitOfMeasurement, StringFormat='{} {0})'}"/>
 										</StackPanel>										
-										<TextBlock FontSize="10" Text="{Binding ProductarticlenumberNavigation.Productdescription}" TextWrapping="WrapWithOverflow"/>
-										<TextBlock FontSize="10" Classes="HeadProd" Text="Производитель (и):"/>
-										<TextBlock FontSize="10" Text="{Binding ManufacturerNamesInOrderproduct}" TextWrapping="WrapWithOverflow"/>
-										<TextBlock FontSize="10" Classes="HeadProd" Text="Цена:"/>
+										<TextBlock FontSize="15" Text="{Binding ProductarticlenumberNavigation.Productdescription}" TextWrapping="WrapWithOverflow"/>
+										<TextBlock FontSize="15" Classes="HeadProd" Text="Производитель (и):"/>
+										<TextBlock FontSize="15" Text="{Binding ManufacturerNamesInOrderproduct}" TextWrapping="WrapWithOverflow"/>
+										<TextBlock FontSize="15" Classes="HeadProd" Text="Цена:"/>
 										<StackPanel Orientation="Horizontal">
-											<TextBlock FontSize="10" Text="{Binding ProductarticlenumberNavigation.Productcost, StringFormat='{}{0}₽'}" Margin="0 0 10 0"
+											<TextBlock FontSize="15" Text="{Binding ProductarticlenumberNavigation.Productcost, StringFormat='{}{0}₽'}" Margin="0 0 10 0"
 													   IsVisible="{Binding IsVisCostWithDisInOrderproduct}" TextDecorations="Strikethrough"/>
-											<TextBlock FontSize="10" Text="{Binding CostWithDisInOrderproduct}"/>
+											<TextBlock FontSize="15" Text="{Binding CostWithDisInOrderproduct}"/>
 										</StackPanel>
 									</StackPanel>
 
-									<Border Classes="BRProd" Width="80" Height="100" Grid.Column="2" VerticalAlignment="Center" Background="{Binding ColorInOrderproduct}">
-										<TextBlock FontSize="10" Classes="Dis" Text="{Binding DiscountIsOrNotInOrderproduct}"/>
+									<Border Classes="BRProd" Width="60" Height="125" Grid.Column="2" VerticalAlignment="Center" Background="{Binding ColorInOrderproduct}">
+										<TextBlock FontSize="15" Classes="Dis" Text="{Binding DiscountIsOrNotInOrderproduct}"/>
 									</Border>
 
 									<StackPanel Grid.Column="3" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
-										<Button Classes="BTMain" Content="+" Width="30" Height="30" Command="{Binding $parent[UserControl].((vm:CurrentOrderVM)DataContext).IncreaseQuantity}" CommandParameter="{Binding}"/>
-										<Button Classes="BTMain" Content="-" Width="30" Height="30" Command="{Binding $parent[UserControl].((vm:CurrentOrderVM)DataContext).DecreaseQuantity}}" CommandParameter="{Binding}"/>
-										<Button Classes="BTMain" Content="❌" Width="30" Height="30" Command="{Binding $parent[UserControl].((vm:CurrentOrderVM)DataContext).RemoveProduct}}" CommandParameter="{Binding}"/>
+										<Button Classes="BTMain" Margin="10 0 10 10" HorizontalContentAlignment="Center" Content="+" Width="35" Height="35" Command="{Binding $parent[UserControl].((vm:CurrentOrderVM)DataContext).IncreaseQuantity}" CommandParameter="{Binding}"/>
+										<Button Classes="BTMain" Margin="10 0 10 10" HorizontalContentAlignment="Center" Content="-" Width="35" Height="35" Command="{Binding $parent[UserControl].((vm:CurrentOrderVM)DataContext).DecreaseQuantity}}" CommandParameter="{Binding}"/>
+										<Button Classes="BTMain" Margin="10 0 10 0" HorizontalContentAlignment="Center" Content="х" Width="35" Height="35" Command="{Binding $parent[UserControl].((vm:CurrentOrderVM)DataContext).RemoveProduct}}" CommandParameter="{Binding}"/>
 									</StackPanel>
 								</Grid>
 							</StackPanel>

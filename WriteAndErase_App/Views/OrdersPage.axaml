@@ -1,0 +1,49 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:vm="using:WriteAndErase_App.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="WriteAndErase_App.OrdersPage"
+			 x:DataType="vm:OrdersVM">
+
+	<Grid RowDefinitions="Auto,*,10">
+		<StackPanel Grid.Row="0">
+			<Grid>
+				<TextBlock Grid.Column="0" Classes="HeadProd" Margin="5 15 0 0" HorizontalAlignment="Left">Все заказы</TextBlock>
+
+				<StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+					<TextBlock Classes="Auth" Text="{Binding User}" Margin="0 10 10 0"/>
+					<Button Classes="BTMain" Content="Назад" Margin="0 10 10 0" Command="{Binding ToBack}" CommandParameter="{Binding}"/>
+				</StackPanel>
+			</Grid>
+		</StackPanel>
+
+		<ScrollViewer Grid.Row="1" Margin="0 10 0 0">
+			<ListBox Background="Transparent" ItemsSource="{Binding ListOrderProduct}"
+					 SelectionMode="Single"
+					 SelectedItem="{Binding SelectedOrder, Mode=TwoWay}"
+					 SelectionChanged="OnOrderSelected">
+				<ListBox.ItemTemplate>
+					<DataTemplate>
+						<Border Classes="BRProd" Padding="10" Background="{Binding RowColor}">
+							<StackPanel>
+								<StackPanel>
+									<TextBlock Classes="HeadProd" Text="{Binding OrderstatusNavigation.Statusname, StringFormat='Статус заказа: {0}'}"/>
+									<TextBlock Classes="HeadProd" Text="{Binding Orderid, StringFormat='Номер заказа: {0}'}"/>
+									<TextBlock Classes="HeadProd" Text="{Binding Orderdate, StringFormat='Дата заказа: {0:D}'}"/>
+									<TextBlock Classes="HeadProd" Text="{Binding Orderdeliverydate, StringFormat='Дата заказа: {0:D}'}"/>
+									<TextBlock Classes="HeadProd" Text="Состав заказа:"/>
+									<TextBlock Text="{Binding ProductInOrder}" TextWrapping="WrapWithOverflow"/>
+									<TextBlock Classes="HeadProd" Text="{Binding TotalOrderSum, StringFormat='Общая сумма заказа: {0}₽'}"/>
+									<TextBlock Classes="HeadProd" Text="{Binding TotalOrderDiscount, StringFormat='Общая сумма скидки: {0}₽'}"/>
+									<TextBlock Classes="HeadProd" Text="{Binding ClientFullName, StringFormat='Клиент: {0}'}"/>
+								</StackPanel>
+							</StackPanel>
+						</Border>
+					</DataTemplate>
+				</ListBox.ItemTemplate>
+			</ListBox>
+		</ScrollViewer>
+	</Grid>
+</UserControl>

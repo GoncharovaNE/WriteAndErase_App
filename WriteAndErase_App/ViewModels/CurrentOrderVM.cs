@@ -74,11 +74,15 @@ namespace WriteAndErase_App.ViewModels
 
         public Order CurrentOrder { get => _currentOrder; set => this.RaiseAndSetIfChanged(ref _currentOrder, value); }
 
+        private bool _isForAdminMeneg = false;
+
+        public bool IsForAdminMeneg { get => _isForAdminMeneg; set => this.RaiseAndSetIfChanged(ref _isForAdminMeneg, value); }
+
         #endregion
 
         public void ToBackProduct()
         {
-            MainWindowViewModel.Instance.ContentPage = new ProductPage(CurrentUser.Userid, _currentOrder, IsVisibleBTCurrentOrder, IsCurrentOrder);
+            MainWindowViewModel.Instance.ContentPage = new ProductPage(CurrentUser.Userid, _currentOrder, IsVisibleBTCurrentOrder, IsCurrentOrder, IsForAdminMeneg);
         }
 
         public CurrentOrderVM()
@@ -86,7 +90,7 @@ namespace WriteAndErase_App.ViewModels
 
         }
 
-        public CurrentOrderVM(User CurrentUser, Order newOrder, bool IsVisibleBTCurrentOrder, bool IsCurrentOrder)
+        public CurrentOrderVM(User CurrentUser, Order newOrder, bool IsVisibleBTCurrentOrder, bool IsCurrentOrder, bool IsAdminMeneg)
         {
             _listCurrentOrderProducts = new ObservableCollection<Orderproduct>(newOrder.Orderproducts
             .Select(op => new Orderproduct
@@ -102,6 +106,8 @@ namespace WriteAndErase_App.ViewModels
             _currentOrder = newOrder;
 
             _currentUser = CurrentUser;
+
+            IsForAdminMeneg = _currentUser.Userrole == 2 || _currentUser.Userrole == 3 ? true : false;
 
             OrderDate = newOrder.Orderdate.ToString("dd.MM.yyyy");
 
@@ -156,7 +162,7 @@ namespace WriteAndErase_App.ViewModels
 
                     ClearNewOrder();
 
-                    MainWindowViewModel.Instance.ContentPage = new ProductPage(CurrentUser.Userid, CurrentOrder, IsVisibleBTCurrentOrder, IsCurrentOrder);                    
+                    MainWindowViewModel.Instance.ContentPage = new ProductPage(CurrentUser.Userid, CurrentOrder, IsVisibleBTCurrentOrder, IsCurrentOrder, IsForAdminMeneg);                    
                 }
                 else
                 {

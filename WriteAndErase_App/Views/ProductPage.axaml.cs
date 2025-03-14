@@ -20,9 +20,9 @@ public partial class ProductPage : UserControl
         DataContext = new ProductVM(id);
     }
 
-    public ProductPage(int id, Order currentOrder, bool IsVisibleBTCurrentOrder, bool IsCurrentOrder)
+    public ProductPage(int id, Order currentOrder, bool IsVisibleBTCurrentOrder, bool IsCurrentOrder, bool IsForAdminMeneg)
     {
         InitializeComponent();
-        DataContext = new ProductVM(id, currentOrder, IsVisibleBTCurrentOrder, IsCurrentOrder);
+        DataContext = new ProductVM(id, currentOrder, IsVisibleBTCurrentOrder, IsCurrentOrder, IsForAdminMeneg);
     }
 }

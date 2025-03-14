@@ -1,0 +1,44 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+			 xmlns:vm="using:WriteAndErase_App.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             x:Class="WriteAndErase_App.EditOrderPage"
+			 x:DataType="vm:EditOrderVM"
+			 xmlns:conv="using:WriteAndErase_App.Converters">
+
+	<UserControl.Resources>
+		<conv:DateConverter x:Key="DateConverter"></conv:DateConverter>
+	</UserControl.Resources>
+
+	<Grid RowDefinitions="Auto,*,10">
+		<StackPanel Grid.Row="0">
+			<Grid>
+				<TextBlock Grid.Column="0" Classes="HeadProd" Margin="5 15 0 0" HorizontalAlignment="Left">Редактирование заказа</TextBlock>
+
+				<StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right">
+					<TextBlock Classes="Auth" Text="{Binding User}" Margin="0 10 10 0"/>
+					<Button Classes="BTMain" Content="Назад" Margin="0 10 10 0" Command="{Binding ToBack}" CommandParameter="{Binding}"/>
+				</StackPanel>
+			</Grid>
+		</StackPanel>
+
+		<StackPanel Grid.Row="1" Margin="0 20 0 0" HorizontalAlignment="Center">
+			<TextBlock Classes="Head" Text="Изменить статус заказа:" Margin="0 10 10 10" />
+			
+			<ComboBox Classes="ChoiceSort" ItemsSource="{Binding ListOrderStatus}" PlaceholderText="Выберите статус заказа:" SelectedItem="{Binding NewOrder.OrderstatusNavigation}">
+				<ComboBox.ItemTemplate>
+					<DataTemplate>
+						<TextBlock Text="{Binding Statusname}"></TextBlock>
+					</DataTemplate>
+				</ComboBox.ItemTemplate>				
+			</ComboBox>
+
+			<TextBlock Classes="Head" Text="Изменить дату доставки заказа:" Margin="0 10 10 10" />
+			<DatePicker Classes="DPEdit" SelectedDate="{Binding NewOrder.Orderdeliverydate, Converter={StaticResource DateConverter}}"></DatePicker>
+
+			<Button Classes="BTMain" Content="Сохранить изменения" Margin="0 10 0 0" Command="{Binding SaveOrder}"></Button>
+		</StackPanel>
+	</Grid>
+</UserControl>
