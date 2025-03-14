@@ -78,7 +78,7 @@ create table OrderProduct
 	OrderID int not null,
 	ProductArticleNumber varchar(100) not null,	
 	ProductQuantity int not null,
-	constraint Order_OrderProduct_fk foreign key (OrderID) references Orders(OrderID),
+	constraint Order_OrderProduct_fk foreign key (OrderID) references Orders(OrderID) ON DELETE CASCADE ON UPDATE CASCADE,
 	constraint Product_OrderProduct_fk foreign key (ProductArticleNumber) references Product(ProductArticleNumber)
 );
 
@@ -93,7 +93,7 @@ create table ProductManufacturer
 	ProductManufacturerID serial primary key,
 	ProductArticleNumber varchar(100) not null,	
 	ManufacturerID int not null,
-	constraint Product_ProductManufacturer_fk foreign key (ProductArticleNumber) references Product(ProductArticleNumber),
+	constraint Product_ProductManufacturer_fk foreign key (ProductArticleNumber) references Product(ProductArticleNumber) ON DELETE CASCADE ON UPDATE CASCADE,
 	constraint Manufacturer_ProductManufacturer_fk foreign key (ManufacturerID) references Manufacturers(ManufacturerID)	
 );
 
@@ -108,6 +108,6 @@ create table ProductSupplier
 	ProductSupplierID serial primary key,
 	ProductArticleNumber varchar(100) not null,	
 	SupplierID int not null,
-	constraint Product_ProductSupplier_fk foreign key (ProductArticleNumber) references Product(ProductArticleNumber),
+	constraint Product_ProductSupplier_fk foreign key (ProductArticleNumber) references Product(ProductArticleNumber) ON DELETE CASCADE ON UPDATE CASCADE,
 	constraint Supplier_ProductSupplier_fk foreign key (SupplierID) references Suppliers(SupplierID)	
 );

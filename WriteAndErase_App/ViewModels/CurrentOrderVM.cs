@@ -8,14 +8,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using WriteAndErase_App.Models;
+using System.Windows.Input;
+using System.Collections.ObjectModel;
+using System.ComponentModel;
 
 namespace WriteAndErase_App.ViewModels
 {
     class CurrentOrderVM : ViewModelBase
     {
-        private List<Orderproduct> _listCurrentOrderProducts;
+        
+        #region Свойства для текущего заказа
 
-        public List<Orderproduct> ListCurrentOrderProducts { get => _listCurrentOrderProducts; set => this.RaiseAndSetIfChanged(ref _listCurrentOrderProducts, value); }
+        private ObservableCollection<Orderproduct> _listCurrentOrderProducts;
+        public ObservableCollection<Orderproduct> ListCurrentOrderProducts
+        {
+            get => _listCurrentOrderProducts;
+            set => this.RaiseAndSetIfChanged(ref _listCurrentOrderProducts, value);
+        }
 
         private string _orderDate;
         public string OrderDate { get => _orderDate; set => this.RaiseAndSetIfChanged(ref _orderDate, value); }
@@ -40,6 +49,8 @@ namespace WriteAndErase_App.ViewModels
 
         private string _deliveryTime;
         public string DeliveryTime { get => _deliveryTime; set => this.RaiseAndSetIfChanged(ref _deliveryTime, value); }
+
+        #endregion
 
         #region передача аргументов для возврата на страницу со списком товаров
 
@@ -77,7 +88,7 @@ namespace WriteAndErase_App.ViewModels
 
         public CurrentOrderVM(User CurrentUser, Order newOrder, bool IsVisibleBTCurrentOrder, bool IsCurrentOrder)
         {
-             _listCurrentOrderProducts = newOrder.Orderproducts
+            _listCurrentOrderProducts = new ObservableCollection<Orderproduct>(newOrder.Orderproducts
             .Select(op => new Orderproduct
             {
                 Productarticlenumber = op.Productarticlenumber,
@@ -86,8 +97,7 @@ namespace WriteAndErase_App.ViewModels
                 ProductarticlenumberNavigation = MainWindowViewModel.myСonnection.Products
                     .Include(p => p.ProductunitofmeasurementNavigation)
                     .FirstOrDefault(p => p.Productarticlenumber == op.Productarticlenumber)
-            })
-            .ToList();
+            }));
 
             _currentOrder = newOrder;
 
@@ -101,7 +111,7 @@ namespace WriteAndErase_App.ViewModels
 
             PickupPoint = newOrder.OrderpickuppointNavigation.Pickuppointname;
 
-            OrderSum = _listCurrentOrderProducts.Sum(x => x.ProductarticlenumberNavigation.Productcost * x.Productquantity);
+            OrderSum = _listCurrentOrderProducts.Sum(x => x.ProductarticlenumberNavigation.Productcost * x.Productquantity);            
 
             OrderDiscount = Math.Round((double)_listCurrentOrderProducts.Sum(x => (x.ProductarticlenumberNavigation.Productcost * x.Productquantity) * 
             (x.ProductarticlenumberNavigation.Productdiscountamount / 100)), 2);
@@ -115,6 +125,8 @@ namespace WriteAndErase_App.ViewModels
 
             _IsVisibleBTCurrentOrder = IsVisibleBTCurrentOrder;
             _IsCurrentOrder = IsCurrentOrder;
+
+            TotalProductQuantity = ListCurrentOrderProducts.Sum(x => x.Productquantity);
         }
 
         public void SaveOrderToDatabase()
@@ -128,17 +140,19 @@ namespace WriteAndErase_App.ViewModels
                         MainWindowViewModel.myСonnection.Orders.Add(CurrentOrder);
                     }
 
+                    CurrentOrder.Orderproducts = ListCurrentOrderProducts;
+
                     foreach (Orderproduct? product in CurrentOrder.Orderproducts)
                     {
-                        MainWindowViewModel.myСonnection.Orderproducts.Add(product);
+                        if (product.Productquantity > 0)
+                        {
+                            MainWindowViewModel.myСonnection.Orderproducts.Add(product);
+                        }
                     }
 
                     MainWindowViewModel.myСonnection.SaveChanges();
 
                     MessageBoxManager.GetMessageBoxStandard("Успех!", "Заказ оформлен!", ButtonEnum.Ok).ShowAsync();
-
-                    IsVisibleBTCurrentOrder = false;
-                    IsCurrentOrder = false;
 
                     ClearNewOrder();
 
@@ -155,10 +169,10 @@ namespace WriteAndErase_App.ViewModels
             }
         }
 
-        private void ClearNewOrder()
+        public void ClearNewOrder()
         {
             CurrentOrder = new Order();
-            ListCurrentOrderProducts = new List<Orderproduct>();
+            ListCurrentOrderProducts = new ObservableCollection<Orderproduct>();
 
             OrderDate = string.Empty;
             OrderDateDelivery = string.Empty;
@@ -168,6 +182,85 @@ namespace WriteAndErase_App.ViewModels
             FinalOrderSum = 0;
             PickupPoint = string.Empty;
             DeliveryTime = string.Empty;
+            IsVisibleBTCurrentOrder = false;
+            IsCurrentOrder = false;
         }
+
+        #region изменение наличия товара в заказе
+       
+        private int _totalProductQuantity;
+        public int TotalProductQuantity
+        {
+            get => _totalProductQuantity;
+            set => this.RaiseAndSetIfChanged(ref _totalProductQuantity, value);
+        }
+
+        public void IncreaseQuantity(Orderproduct product)
+        {
+            if (product != null)
+            {
+                product.Productquantity++;
+                UpdateProduct(product);
+            }
+        }
+
+        public void DecreaseQuantity(Orderproduct product)
+        {
+            if (product != null)
+            {
+                if (product.Productquantity > 1)
+                {
+                    product.Productquantity--;
+                }
+                else
+                {
+                    ListCurrentOrderProducts.Remove(product);
+                }
+                UpdateProduct(product);
+            }
+        }
+
+        public void RemoveProduct(Orderproduct product)
+        {
+            if (product != null)
+            {
+                ListCurrentOrderProducts.Remove(product);
+                UpdateProduct(product);
+            }
+        }
+
+        private void UpdateProduct(Orderproduct product)
+        {
+            int index = ListCurrentOrderProducts.IndexOf(product);
+            if (index >= 0)
+            {
+                ListCurrentOrderProducts[index] = new Orderproduct
+                {
+                    Productarticlenumber = product.Productarticlenumber,
+                    Productquantity = product.Productquantity,
+                    ProductarticlenumberNavigation = product.ProductarticlenumberNavigation 
+                };
+            }
+
+            UpdateOrderSummary();
+        }
+
+        public void UpdateOrderSummary()
+        {
+            OrderSum = ListCurrentOrderProducts.Sum(x => x.ProductarticlenumberNavigation.Productcost * x.Productquantity);
+            OrderDiscount = Math.Round((double)ListCurrentOrderProducts.Sum(x => (x.ProductarticlenumberNavigation.Productcost * x.Productquantity) *
+            (x.ProductarticlenumberNavigation.Productdiscountamount / 100)), 2);
+            FinalOrderSum = Math.Max(OrderSum - OrderDiscount, 0);
+
+            TotalProductQuantity = ListCurrentOrderProducts.Sum(x => x.Productquantity);
+
+            if (ListCurrentOrderProducts.Count == 0)
+            {
+                ClearNewOrder();
+                ToBackProduct();
+            }
+        }
+
+        #endregion
     }
 }

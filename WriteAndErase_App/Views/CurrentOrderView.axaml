@@ -38,6 +38,7 @@
 				<TextBlock FontSize="15" Text="{Binding OrderDiscount, StringFormat='Сумма скидки заказа: {0}₽'}" Margin="0 0 10 0"/>
 				<TextBlock FontSize="15" Text="{Binding FinalOrderSum, StringFormat='Итоговая сумма заказа: {0}₽'}" Margin="0 0 10 0"/>				
 				<TextBlock FontSize="15" Text="{Binding PickupPoint, StringFormat='Пункт выдачи: {0}'}" Margin="0 0 10 0"/>				
+				<TextBlock FontSize="15" Text="{Binding TotalProductQuantity, StringFormat='Количество товаров в заказе: {0}'}" Margin="0 0 10 0"/>				
 			</StackPanel>
 			<TextBlock Classes="Auth" Text="Состав заказа" Margin="10 10 0 0" HorizontalAlignment="Left"/>
 		</StackPanel>
@@ -48,8 +49,8 @@
 					<DataTemplate>
 						<Border Classes="BRProd" Padding="10">
 							<StackPanel>
-								<Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto">
-									<Border Classes="BRProd" Padding="5" Width="100" Height="100" VerticalAlignment="Center">
+								<Grid ColumnDefinitions="Auto,*,Auto,Auto" RowDefinitions="Auto">
+									<Border Grid.Column="0" Classes="BRProd" Padding="5" Width="100" Height="100" VerticalAlignment="Center">
 										<Image Source="{Binding  ProductarticlenumberNavigation.Productphoto,Converter={StaticResource ImageConverter}}"></Image>
 									</Border>
 
@@ -57,7 +58,7 @@
 										<StackPanel Orientation="Horizontal">
 											<TextBlock FontSize="10" Classes="HeadProd" Text="{Binding ProductarticlenumberNavigation.Productname}"/>
 											<TextBlock FontSize="10" Classes="HeadProd" Text="{Binding Productquantity, StringFormat=' (Кол-во: {0} '}"/>
-											<TextBlock FontSize="10" Classes="HeadProd" Text="{Binding ProductUnitOfMeasurement, StringFormat='{}{0})'}"/>
+											<TextBlock FontSize="10" Classes="HeadProd" Text="{Binding ProductUnitOfMeasurement, StringFormat='{} {0})'}"/>
 										</StackPanel>										
 										<TextBlock FontSize="10" Text="{Binding ProductarticlenumberNavigation.Productdescription}" TextWrapping="WrapWithOverflow"/>
 										<TextBlock FontSize="10" Classes="HeadProd" Text="Производитель (и):"/>
@@ -73,6 +74,12 @@
 									<Border Classes="BRProd" Width="80" Height="100" Grid.Column="2" VerticalAlignment="Center" Background="{Binding ColorInOrderproduct}">
 										<TextBlock FontSize="10" Classes="Dis" Text="{Binding DiscountIsOrNotInOrderproduct}"/>
 									</Border>
+
+									<StackPanel Grid.Column="3" Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+										<Button Classes="BTMain" Content="+" Width="30" Height="30" Command="{Binding $parent[UserControl].((vm:CurrentOrderVM)DataContext).IncreaseQuantity}" CommandParameter="{Binding}"/>
+										<Button Classes="BTMain" Content="-" Width="30" Height="30" Command="{Binding $parent[UserControl].((vm:CurrentOrderVM)DataContext).DecreaseQuantity}}" CommandParameter="{Binding}"/>
+										<Button Classes="BTMain" Content="❌" Width="30" Height="30" Command="{Binding $parent[UserControl].((vm:CurrentOrderVM)DataContext).RemoveProduct}}" CommandParameter="{Binding}"/>
+									</StackPanel>
 								</Grid>
 							</StackPanel>
 						</Border>
