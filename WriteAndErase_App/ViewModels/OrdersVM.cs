@@ -10,32 +10,43 @@ using WriteAndErase_App.Models;
 
 namespace WriteAndErase_App.ViewModels
 {
+    /// <summary>
+    /// ViewModel для управления заказами.
+    /// </summary>
     class OrdersVM : ViewModelBase
     {
+        /// <summary>
+        /// ФИО пользователя.
+        /// </summary>
         private string _user;
-
         public string User { get => _user; set => this.RaiseAndSetIfChanged(ref _user, value); }
 
+        /// <summary>
+        /// Текущий пользователь.
+        /// </summary>
         private User? _currentUser;
-
         public User? CurrentUser { get => _currentUser; set => this.RaiseAndSetIfChanged(ref _currentUser, value); }
 
+        /// <summary>
+        /// Список заказов пользователя.
+        /// </summary>
         private List<Order> _listOrderProduct;
-
         public List<Order> ListOrderProduct { get => _listOrderProduct; set => this.RaiseAndSetIfChanged(ref _listOrderProduct, value); }
 
+        /// <summary>
+        /// Выбранный заказ.
+        /// </summary>
         private Orderproduct _selectedOrder;
+        public Orderproduct SelectedOrder { get => _selectedOrder; set => this.RaiseAndSetIfChanged(ref _selectedOrder, value); }
 
-        public Orderproduct SelectedOrder
-        {
-            get => _selectedOrder;
-            set => this.RaiseAndSetIfChanged(ref _selectedOrder, value);
-        }
-
+        /// <summary>
+        /// Команда для редактирования выбранного заказа.
+        /// </summary>
         public ReactiveCommand<int, Unit> EditOrderproductCommand { get; }
 
-        
-
+        /// <summary>
+        /// Конструктор по умолчанию.
+        /// </summary>
         public OrdersVM()
         {
             _listOrderProduct = MainWindowViewModel.myСonnection.Orders
@@ -46,6 +57,10 @@ namespace WriteAndErase_App.ViewModels
                                 .ToList();
         }
 
+        /// <summary>
+        /// Конструктор с параметром пользователя.
+        /// </summary>
+        /// <param name="currentUser">Текущий пользователь.</param>
         public OrdersVM(User currentUser)
         {
             _currentUser = currentUser;
@@ -61,24 +76,41 @@ namespace WriteAndErase_App.ViewModels
             EditOrderproductCommand = ReactiveCommand.Create<int>(ToEditOrder);
         }
 
+        /// <summary>
+        /// Метод для возврата на страницу товаров.
+        /// </summary>
         public void ToBack()
         {
             MainWindowViewModel.Instance.ContentPage = new ProductPage(CurrentUser.Userid);
         }
 
+        /// <summary>
+        /// Метод для перехода на страницу редактирования заказа.
+        /// </summary>
+        /// <param name="id">Идентификатор заказа.
+        /// <param name="СurrentUser">Текущий пользователь.</param>
         public void ToEditOrder(int id)
         {
             MainWindowViewModel.Instance.ContentPage = new EditOrderPage(id, CurrentUser);
         }
 
-        #region Сортировка и фильтрация
+        #region Сортировка и фильтрация заказов
 
+        /// <summary>
+        /// Выбранный параметр сортировки (0 - без сортировки, 1 - по возрастанию суммы, 2 - по убыванию суммы).
+        /// </summary>
         int _selectedSort = 0;
         public int SelectedSort { get => _selectedSort; set { _selectedSort = value; filtersOrders(); } }
 
+        /// <summary>
+        /// Выбранный параметр фильтрации скидок.
+        /// </summary>
         int _selectedFilter = 0;
         public int SelectedFilter { get => _selectedFilter; set { _selectedFilter = value; filtersOrders(); } }
 
+        /// <summary>
+        /// Метод для сортировки и фильтрации списка заказов.
+        /// </summary>
         private void filtersOrders()
         {
             ListOrderProduct = MainWindowViewModel.myСonnection.Orders

@@ -16,36 +16,57 @@ using Avalonia.Threading;
 
 namespace WriteAndErase_App.ViewModels
 {
+    /// <summary>
+    /// ViewModel для авторизации пользователей.
+    /// </summary>
     class AuthorizationVM : ViewModelBase
     {
+        /// <summary>
+        /// Список пользователей.
+        /// </summary>
         private List<User> _listUser;
-
         public List<User> ListUser { get => _listUser; set => this.RaiseAndSetIfChanged(ref _listUser, value); }
-        
-        private string _login;
 
+        /// <summary>
+        /// Логин пользователя.
+        /// </summary>
+        private string _login;
         public string Login { get => _login; set => this.RaiseAndSetIfChanged(ref _login, value); }
 
+        /// <summary>
+        /// Пароль пользователя.
+        /// </summary>
         private string _password;
-
         public string Password { get => _password; set => this.RaiseAndSetIfChanged(ref _password, value); }
 
+        /// <summary>
+        /// Флаг доступности текстовых полей ввода.
+        /// </summary>
         bool _TextBoxEnable = true;
-
         public bool TextBoxIsEnable { get => _TextBoxEnable; set => this.RaiseAndSetIfChanged(ref _TextBoxEnable, value); }
 
+        /// <summary>
+        /// Конструктор класса AuthorizationVM.
+        /// </summary>
         public AuthorizationVM()
         {
             _listUser = MainWindowViewModel.myСonnection.Users.ToList();
             timer.Interval = new TimeSpan(0, 0, 10);
             timer.Tick += new EventHandler(StopTimer);
         }
+
+        /// <summary>
+        /// Переход на страницу с товарами в роли гостя.
+        /// </summary>
         public void ToProductPage()
         {
             int id = 1;
             MainWindowViewModel.Instance.ContentPage = new ProductPage(id);
         }
 
+        /// <summary>
+        /// Проверка авторизации и переход на страницу для авторизированного пользователя.
+        /// </summary>
         public async void ToAuthComplete()
         {
             int id = 0;
@@ -62,7 +83,9 @@ namespace WriteAndErase_App.ViewModels
             }
         }
 
-
+        /// <summary>
+        /// Проверка учетных данных пользователя.
+        /// </summary>
         private void CheckAuth(string login, string password, ref int id)
         {
             User? user = _listUser.FirstOrDefault(x => x.Userlogin == login && x.Userpassword == password);
@@ -79,11 +102,16 @@ namespace WriteAndErase_App.ViewModels
 
         #region Генерация капчи
 
+        /// <summary>
+        /// Холст для отображения капчи.
+        /// </summary>
         Canvas _Captcha;
-
         public Canvas Captcha { get => _Captcha; set => this.RaiseAndSetIfChanged(ref _Captcha, value); }
 
-        public char rndLet()
+        /// <summary>
+        /// Генерирует случайную букву латинского алфавита.
+        /// </summary>
+        public char RandomLet()
         {
             Random rnd = new Random();
             int randomIndex = rnd.Next(0, 26);
@@ -93,27 +121,47 @@ namespace WriteAndErase_App.ViewModels
 
         #region Свойства и переменные для элементов капчи        
 
+        /// <summary>
+        /// Флаг отображения кнопки авторизации во время появления капчи.
+        /// </summary>
         bool _ButtonVisibleAuth = true;
-        bool _ButtonVisibleCheckedCaptchaKod = false;
-        bool _TextBoxVisible = false;
-
         public bool ButtonVisibleAuth { get => _ButtonVisibleAuth; set => this.RaiseAndSetIfChanged(ref _ButtonVisibleAuth, value); }
+
+        /// <summary>
+        /// Флаг отображения кнопки проверки кода во время появления капчи.
+        /// </summary>
+        bool _ButtonVisibleCheckedCaptchaKod = false;
         public bool ButtonVisibleCheckedCaptchaKod { get => _ButtonVisibleCheckedCaptchaKod; set => this.RaiseAndSetIfChanged(ref _ButtonVisibleCheckedCaptchaKod, value); }
+
+        /// <summary>
+        /// Флаг отображения поля ввода для кода капчи.
+        /// </summary>
+        bool _TextBoxVisible = false;
         public bool TextBoxVisible { get => _TextBoxVisible; set => this.RaiseAndSetIfChanged(ref _TextBoxVisible, value); }
 
+        /// <summary>
+        /// Код капчи который вводит пользователь.
+        /// </summary>
         string _Kod;
         public string Kod { get => _Kod; set => this.RaiseAndSetIfChanged(ref _Kod, value); }
 
+        /// <summary>
+        /// Список символов из которых состоит код капчи.
+        /// </summary>
         List<string> kodList = new List<string>();
         public List<string> KodList { get => kodList; set => kodList = this.RaiseAndSetIfChanged(ref kodList, value); }
 
-
         #endregion
 
+        /// <summary>
+        /// Создание капчи.
+        /// </summary>
         public void CreateCaptha()
         {
             ButtonVisibleAuth = false;
             Random rnd = new Random();
+
+            // Генерация цветов фона и элементов капчи
             SolidColorBrush color1 = new SolidColorBrush(Color.FromRgb(
                 Convert.ToByte(rnd.Next(151, 256)),
                 Convert.ToByte(rnd.Next(151, 256)),
@@ -137,6 +185,7 @@ namespace WriteAndErase_App.ViewModels
                 Background = color3,
             };
 
+            // Генерация линий на капче
             for (int i = 0; i < 50; i++)
             {
                 Line line = new Line()
@@ -152,6 +201,7 @@ namespace WriteAndErase_App.ViewModels
             double lastX = 10;
             double lastY = 100;
 
+            // Генерация цифр и букв для составления кода капчи
             for (int i = 0; i < 3; i++)
             {
                 TextBlock number = new TextBlock()
@@ -173,7 +223,7 @@ namespace WriteAndErase_App.ViewModels
 
                 TextBlock letter = new TextBlock()
                 {
-                    Text = rndLet().ToString(),
+                    Text = RandomLet().ToString(),
                     FontSize = rnd.Next(20, 30),
                     Foreground = color1,
                     Padding = new Avalonia.Thickness(lastX, lastY)
@@ -208,6 +258,9 @@ namespace WriteAndErase_App.ViewModels
 
         #endregion
 
+        /// <summary>
+        /// Проверка введенного кода капчи.
+        /// </summary>
         public void CheckKod()
         {
             if (Kod == String.Join("", KodList) && Kod != "" && Login != "" && _listUser.Any(x => x.Userlogin == Login) 
@@ -228,8 +281,15 @@ namespace WriteAndErase_App.ViewModels
         }
 
         #region Таймер
+
+        /// <summary>
+        /// Переменная создающая таймер.
+        /// </summary>
         DispatcherTimer timer = new DispatcherTimer();
 
+        /// <summary>
+        /// Запуск таймера блокировки ввода.
+        /// </summary>
         public void StartTimer()
         {
             timer.Start();
@@ -243,6 +303,9 @@ namespace WriteAndErase_App.ViewModels
             TextBoxIsEnable = false;
         }
 
+        /// <summary>
+        /// Остановка таймера и разблокировка ввода.
+        /// </summary>
         public void StopTimer(object sender, EventArgs e)
         {
             timer.Stop();

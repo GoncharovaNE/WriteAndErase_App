@@ -18,85 +18,132 @@ using System.IO;
 
 namespace WriteAndErase_App.ViewModels
 {
+    /// <summary>
+    /// ViewModel для управления текущим заказом.
+    /// </summary>
     class CurrentOrderVM : ViewModelBase
     {
-        
         #region Свойства для текущего заказа
 
+        /// <summary>
+        /// Список продуктов в текущем заказе.
+        /// </summary>
         private ObservableCollection<Orderproduct> _listCurrentOrderProducts;
-        public ObservableCollection<Orderproduct> ListCurrentOrderProducts
-        {
-            get => _listCurrentOrderProducts;
-            set => this.RaiseAndSetIfChanged(ref _listCurrentOrderProducts, value);
-        }
+        public ObservableCollection<Orderproduct> ListCurrentOrderProducts { get => _listCurrentOrderProducts; set => this.RaiseAndSetIfChanged(ref _listCurrentOrderProducts, value); }
 
+        /// <summary>
+        /// Дата заказа.
+        /// </summary>
         private string _orderDate;
         public string OrderDate { get => _orderDate; set => this.RaiseAndSetIfChanged(ref _orderDate, value); }
 
+        /// <summary>
+        /// Дата доставки заказа.
+        /// </summary>
         private string _orderDateDelivery;
         public string OrderDateDelivery { get => _orderDateDelivery; set => this.RaiseAndSetIfChanged(ref _orderDateDelivery, value); }
 
+        /// <summary>
+        /// Код заказа.
+        /// </summary>
         private int _orderCode;
         public int OrderCode { get => _orderCode; set => this.RaiseAndSetIfChanged(ref _orderCode, value); }
 
+        /// <summary>
+        /// Общая сумма заказа.
+        /// </summary>
         private float _orderSum;
         public float OrderSum { get => _orderSum; set => this.RaiseAndSetIfChanged(ref _orderSum, value); }
 
+        /// <summary>
+        /// Скидка на заказ.
+        /// </summary>
         private double _orderDiscount;
         public double OrderDiscount { get => _orderDiscount; set => this.RaiseAndSetIfChanged(ref _orderDiscount, value); }
 
+        /// <summary>
+        /// Итоговая сумма заказа после применения скидки.
+        /// </summary>
         private double _finalOrderSum;
         public double FinalOrderSum { get => _finalOrderSum; set => this.RaiseAndSetIfChanged(ref _finalOrderSum, value); }
 
+        /// <summary>
+        /// Пункт выдачи заказа.
+        /// </summary>
         private string _pickupPoint;
         public string PickupPoint { get => _pickupPoint; set => this.RaiseAndSetIfChanged(ref _pickupPoint, value); }
 
+        /// <summary>
+        /// Время (количество дней) доставки заказа.
+        /// </summary>
         private string _deliveryTime;
         public string DeliveryTime { get => _deliveryTime; set => this.RaiseAndSetIfChanged(ref _deliveryTime, value); }
 
+        /// <summary>
+        /// Флаг, указывающий, сформирован ли заказ.
+        /// </summary>
         private bool _orderFormed = false;
-
         public bool OrderFormed { get => _orderFormed; set => this.RaiseAndSetIfChanged(ref _orderFormed, value); }
 
+        /// <summary>
+        /// Флаг, указывающий, сформирован ли талон на заказ.
+        /// </summary>
         private bool _ticketFormed = false;
-
         public bool TicketFormed { get => _ticketFormed; set => this.RaiseAndSetIfChanged(ref _ticketFormed, value); }
 
         #endregion
 
-        #region передача аргументов для возврата на страницу со списком товаров
+        #region Передача аргументов для возврата на страницу со списком товаров
 
+        /// <summary>
+        /// Текущий пользователь.
+        /// </summary>
         private User? _currentUser;
-
         public User? CurrentUser { get => _currentUser; set => this.RaiseAndSetIfChanged(ref _currentUser, value); }
 
+        /// <summary>
+        /// ФИО пользователя.
+        /// </summary>
         private string _user;
-
         public string User { get => _user; set => this.RaiseAndSetIfChanged(ref _user, value); }
 
+        /// <summary>
+        /// Видимость кнопки текущего заказа.
+        /// </summary>
         private bool _IsVisibleBTCurrentOrder = false;
-
         public bool IsVisibleBTCurrentOrder { get => _IsVisibleBTCurrentOrder; set => this.RaiseAndSetIfChanged(ref _IsVisibleBTCurrentOrder, value); }
 
+        /// <summary>
+        /// Флаг, указывающий, является ли заказ текущим.
+        /// </summary>
         private bool _IsCurrentOrder;
-
         public bool IsCurrentOrder { get => _IsCurrentOrder; set => this.RaiseAndSetIfChanged(ref _IsCurrentOrder, value); }
-        
-        private Order _currentOrder;
 
+        /// <summary>
+        /// Объект текущего заказа.
+        /// </summary>
+        private Order _currentOrder;
         public Order CurrentOrder { get => _currentOrder; set => this.RaiseAndSetIfChanged(ref _currentOrder, value); }
 
+        /// <summary>
+        /// Флаг, указывающий, доступен ли функционал администратора/менеджера.
+        /// </summary>
         private bool _isForAdminMeneg = false;
-
         public bool IsForAdminMeneg { get => _isForAdminMeneg; set => this.RaiseAndSetIfChanged(ref _isForAdminMeneg, value); }
 
         #endregion
 
+        /// <summary>
+        /// Метод возвращает пользователя на страницу со списком товаров.
+        /// </summary>
         public void ToBackProduct()
         {
             MainWindowViewModel.Instance.ContentPage = new ProductPage(CurrentUser.Userid, _currentOrder, IsVisibleBTCurrentOrder, IsCurrentOrder, IsForAdminMeneg);
         }
 
+        /// <summary>
+        /// Завершает текущий заказ с возможностью подтверждения или отмены действий.
+        /// </summary>
         public async void CompleteCurrentOrder()
         {
             if (OrderFormed != true)
@@ -155,11 +202,17 @@ namespace WriteAndErase_App.ViewModels
             }
         }
 
+        /// <summary>
+        /// Конструктор по умолчанию.
+        /// </summary>
         public CurrentOrderVM()
         {
 
         }
 
+        /// <summary>
+        /// Конструктор с параметрами для инициализации текущего заказа.
+        /// </summary>
         public CurrentOrderVM(User CurrentUser, Order newOrder, bool IsVisibleBTCurrentOrder, bool IsCurrentOrder, bool IsAdminMeneg)
         {
             _listCurrentOrderProducts = new ObservableCollection<Orderproduct>(newOrder.Orderproducts
@@ -205,6 +258,9 @@ namespace WriteAndErase_App.ViewModels
             TotalProductQuantity = ListCurrentOrderProducts.Sum(x => x.Productquantity);
         }
 
+        /// <summary>
+        /// Сохраняет заказ в базу данных.
+        /// </summary>
         public void SaveOrderToDatabase()
         {
             try
@@ -243,6 +299,9 @@ namespace WriteAndErase_App.ViewModels
             }
         }
 
+        /// <summary>
+        /// Очищает данные текущего заказа.
+        /// </summary>
         public void ClearNewOrder()
         {
             CurrentOrder = new Order();
@@ -260,6 +319,9 @@ namespace WriteAndErase_App.ViewModels
             IsCurrentOrder = false;
         }
 
+        /// <summary>
+        /// Генерирует талон на заказ в формате PDF.
+        /// </summary>
         public void GenerateOrderTicket()
         {
             try
@@ -345,13 +407,16 @@ namespace WriteAndErase_App.ViewModels
 
         #region изменение наличия товара в заказе
 
+        /// <summary>
+        /// Общее количество товаров в заказе.
+        /// </summary>
         private int _totalProductQuantity;
-        public int TotalProductQuantity
-        {
-            get => _totalProductQuantity;
-            set => this.RaiseAndSetIfChanged(ref _totalProductQuantity, value);
-        }
+        public int TotalProductQuantity { get => _totalProductQuantity; set => this.RaiseAndSetIfChanged(ref _totalProductQuantity, value); }
 
+        /// <summary>
+        /// Увеличивает количество определённого товара в заказе.
+        /// </summary>
+        /// <param name="product">Товар, количество которого увеличивается.</param>
         public void IncreaseQuantity(Orderproduct product)
         {
             if (product != null)
@@ -361,6 +426,11 @@ namespace WriteAndErase_App.ViewModels
             }
         }
 
+        /// <summary>
+        /// Уменьшает количество определённого товара в заказе.
+        /// Если количество становится равным меньше 1, товар удаляется из списка заказа.
+        /// </summary>
+        /// <param name="product">Товар, количество которого уменьшается.</param>
         public void DecreaseQuantity(Orderproduct product)
         {
             if (product != null)
@@ -377,6 +447,10 @@ namespace WriteAndErase_App.ViewModels
             }
         }
 
+        /// <summary>
+        /// Удаляет товар из списка текущего заказа.
+        /// </summary>
+        /// <param name="product">Товар, который необходимо удалить.</param>
         public void RemoveProduct(Orderproduct product)
         {
             if (product != null)
@@ -386,6 +460,10 @@ namespace WriteAndErase_App.ViewModels
             }
         }
 
+        /// <summary>
+        /// Обновляет информацию о товаре в списке текущего заказа.
+        /// </summary>
+        /// <param name="product">Товар, данные которого обновляются.</param>
         private void UpdateProduct(Orderproduct product)
         {
             int index = ListCurrentOrderProducts.IndexOf(product);
@@ -402,6 +480,10 @@ namespace WriteAndErase_App.ViewModels
             UpdateOrderSummary();
         }
 
+        /// <summary>
+        /// Пересчитывает итоговую сумму заказа, сумму скидки и количество товаров.
+        /// Если список заказанных товаров пуст, очищает заказ.
+        /// </summary>
         public void UpdateOrderSummary()
         {
             OrderSum = ListCurrentOrderProducts.Sum(x => x.ProductarticlenumberNavigation.Productcost * x.Productquantity);
