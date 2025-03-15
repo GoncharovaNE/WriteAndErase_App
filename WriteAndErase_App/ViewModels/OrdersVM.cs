@@ -79,8 +79,6 @@ namespace WriteAndErase_App.ViewModels
         int _selectedFilter = 0;
         public int SelectedFilter { get => _selectedFilter; set { _selectedFilter = value; filtersOrders(); } }
 
-        #endregion
-
         private void filtersOrders()
         {
             ListOrderProduct = MainWindowViewModel.myСonnection.Orders
@@ -129,6 +127,8 @@ namespace WriteAndErase_App.ViewModels
                     .Sum(x => x.ProductarticlenumberNavigation.Productdiscountamount) >= dis4).ToList();
                     break;
             }
-        }       
+        }
+
+        #endregion
     }
 }
