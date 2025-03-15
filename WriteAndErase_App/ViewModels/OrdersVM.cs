@@ -34,6 +34,8 @@ namespace WriteAndErase_App.ViewModels
 
         public ReactiveCommand<int, Unit> EditOrderproductCommand { get; }
 
+        
+
         public OrdersVM()
         {
             _listOrderProduct = MainWindowViewModel.myСonnection.Orders
@@ -67,6 +69,11 @@ namespace WriteAndErase_App.ViewModels
         public void ToEditOrder(int id)
         {
             MainWindowViewModel.Instance.ContentPage = new EditOrderPage(id, CurrentUser);
+        }
+
+        private void FiltersAndSorting()
+        {
+            
         }
     }
 }
