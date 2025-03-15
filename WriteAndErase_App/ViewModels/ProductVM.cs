@@ -44,7 +44,7 @@ namespace WriteAndErase_App.ViewModels
 
         public ProductVM()
         {            
-            _listProduct = MainWindowViewModel.myСonnection.Products.Include(x => x.Productmanufacturers).ThenInclude(x => x.Manufacturer).ToList();
+            _listProduct = MainWindowViewModel.myСonnection.Products.AsNoTracking().Include(x => x.Productmanufacturers).ThenInclude(x => x.Manufacturer).ToList();
             _listPickupPoint = MainWindowViewModel.myСonnection.Pickuppoints.ToList();
         }
 
@@ -56,8 +56,8 @@ namespace WriteAndErase_App.ViewModels
 
             _listOrder = MainWindowViewModel.myСonnection.Orders.ToList();
             _listPickupPoint = MainWindowViewModel.myСonnection.Pickuppoints.ToList();
-            
-            _listProduct = MainWindowViewModel.myСonnection.Products.Include(x => x.Productmanufacturers).ThenInclude(x => x.Manufacturer).ToList();
+
+            _listProduct = MainWindowViewModel.myСonnection.Products.AsNoTracking().Include(x => x.Productmanufacturers).ThenInclude(x => x.Manufacturer).ToList();
 
             IsForAdminMeneg = _currentUser.Userrole == 2 || _currentUser.Userrole == 3 ? true : false;
         }
@@ -71,7 +71,7 @@ namespace WriteAndErase_App.ViewModels
             _listOrder = MainWindowViewModel.myСonnection.Orders.ToList();
             _listPickupPoint = MainWindowViewModel.myСonnection.Pickuppoints.ToList();
 
-            _listProduct = MainWindowViewModel.myСonnection.Products.Include(x => x.Productmanufacturers).ThenInclude(x => x.Manufacturer).ToList();
+            _listProduct = MainWindowViewModel.myСonnection.Products.AsNoTracking().Include(x => x.Productmanufacturers).ThenInclude(x => x.Manufacturer).ToList();
 
             NewOrder = currentOrder;
             _IsVisibleBTCurrentOrder = IsVisibleBTCurrentOrder;

@@ -74,37 +74,36 @@
 				<ListBox.ItemTemplate>
 					<DataTemplate>
 						<Border Classes="BRProd" Padding="10">
-							<StackPanel>
-							<Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto">
-								<Border Classes="BRProd" Padding="5" Width="140" Height="140" VerticalAlignment="Center">
-									<Image Source="{Binding Productphoto ,Converter={StaticResource ImageConverter}}"></Image>
-								</Border>
+							<StackPanel Background="White">
+								<Grid ColumnDefinitions="Auto,*,Auto" RowDefinitions="Auto">
+									<Border Classes="BRProd" Padding="5" Width="140" Height="140" VerticalAlignment="Center">
+										<Image Source="{Binding Productphoto ,Converter={StaticResource ImageConverter}}"></Image>
+									</Border>
 
-								<StackPanel Grid.Column="1" Margin="10 0 10 0">
-									<TextBlock Classes="HeadProd" Text="{Binding Productname}"/>
-									<TextBlock Text="{Binding Productdescription}" TextWrapping="WrapWithOverflow"/>
-									<TextBlock Classes="HeadProd" Text="Производитель (и):"/>
-									<TextBlock Text="{Binding ManufacturerNames}" TextWrapping="WrapWithOverflow"/>
-									<TextBlock Classes="HeadProd" Text="Цена:"/>
-									<StackPanel Orientation="Horizontal">
-										<TextBlock Text="{Binding Productcost, StringFormat='{}{0}₽'}" Margin="0 0 10 0" 
-												   IsVisible="{Binding IsVisCostWithDis}" TextDecorations="Strikethrough"/>
-										<TextBlock Text="{Binding CostWithDis}"/>
-									</StackPanel>									
-								</StackPanel>
+									<StackPanel Grid.Column="1" Margin="10 0 10 0">
+										<TextBlock Classes="HeadProd" Text="{Binding Productname}"/>
+										<TextBlock Text="{Binding Productdescription}" TextWrapping="WrapWithOverflow"/>
+										<TextBlock Classes="HeadProd" Text="Производитель (и):"/>
+										<TextBlock Text="{Binding ManufacturerNames}" TextWrapping="WrapWithOverflow"/>
+										<TextBlock Classes="HeadProd" Text="Цена:"/>
+										<StackPanel Orientation="Horizontal">
+											<TextBlock Text="{Binding Productcost, StringFormat='{}{0}₽'}" Margin="0 0 10 0"
+													   IsVisible="{Binding IsVisCostWithDis}" TextDecorations="Strikethrough"/>
+											<TextBlock Text="{Binding CostWithDis}"/>
+										</StackPanel>
+									</StackPanel>
 
-								<Border Classes="BRProd" Width="80" Height="140" Grid.Column="2" VerticalAlignment="Center" Background="{Binding Color}">
-									<TextBlock Classes="Dis" Text="{Binding DiscountIsOrNot}"/>
-								</Border>
-							</Grid>
+									<Border Classes="BRProd" Width="80" Height="140" Grid.Column="2" VerticalAlignment="Center" Background="{Binding Color}">
+										<TextBlock Classes="Dis" Text="{Binding DiscountIsOrNot}"/>
+									</Border>
+								</Grid>
+								<StackPanel.ContextMenu>
+									<ContextMenu>
+										<MenuItem Header="Добавить к заказу" Command="{Binding $parent[UserControl].((vm:ProductVM)DataContext).AddToOrder}}" CommandParameter="{Binding}" />
+									</ContextMenu>
+								</StackPanel.ContextMenu>
 							</StackPanel>
-							
-						<Border.ContextMenu>
-						    <ContextMenu>
-						        <MenuItem Header="Добавить к заказу" Command="{Binding $parent[UserControl].((vm:ProductVM)DataContext).AddToOrder}}" CommandParameter="{Binding}" />
-						    </ContextMenu>
-						</Border.ContextMenu>
-						</Border>
+						</Border>						
 					</DataTemplate>
 				</ListBox.ItemTemplate>
 			</ListBox>

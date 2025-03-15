@@ -71,9 +71,64 @@ namespace WriteAndErase_App.ViewModels
             MainWindowViewModel.Instance.ContentPage = new EditOrderPage(id, CurrentUser);
         }
 
-        private void FiltersAndSorting()
+        #region Сортировка и фильтрация
+
+        int _selectedSort = 0;
+        public int SelectedSort { get => _selectedSort; set { _selectedSort = value; filtersOrders(); } }
+
+        int _selectedFilter = 0;
+        public int SelectedFilter { get => _selectedFilter; set { _selectedFilter = value; filtersOrders(); } }
+
+        #endregion
+
+        private void filtersOrders()
         {
-            
-        }
+            ListOrderProduct = MainWindowViewModel.myСonnection.Orders
+                                .Include(o => o.Orderproducts)
+                                .ThenInclude(op => op.ProductarticlenumberNavigation)
+                                .Include(o => o.OrderstatusNavigation)
+                                .Where(o => o.Orderproducts.Any())
+                                .ToList();
+
+            switch (_selectedSort)
+            {
+                case 0:
+                    ListOrderProduct = ListOrderProduct.ToList();
+                    break;
+                case 1:
+                    ListOrderProduct = ListOrderProduct.OrderBy(x => x.Orderproducts
+                    .Sum(x => x.ProductarticlenumberNavigation.Productcost * x.Productquantity)).ToList();
+                    break;
+                case 2:
+                    ListOrderProduct = ListOrderProduct.OrderByDescending(x => x.Orderproducts
+                    .Sum(x => x.ProductarticlenumberNavigation.Productcost * x.Productquantity)).ToList();
+                    break;
+            }
+
+            float dis1 = 10F;
+            float dis2 = 11F;
+            float dis3 = 14F;
+            float dis4 = 15F;
+
+            switch (_selectedFilter)
+            {
+                case 0:
+                    ListOrderProduct = ListOrderProduct.ToList();
+                    break;
+                case 1:
+                    ListOrderProduct = ListOrderProduct.Where(x => x.Orderproducts
+                    .Sum(x => x.ProductarticlenumberNavigation.Productdiscountamount) <= dis1).ToList();
+                    break;
+                case 2:
+                    ListOrderProduct = ListOrderProduct.Where(x => x.Orderproducts
+                    .Sum(x => x.ProductarticlenumberNavigation.Productdiscountamount) <= dis3 && x.Orderproducts
+                    .Sum(x => x.ProductarticlenumberNavigation.Productdiscountamount) >= dis2).ToList();
+                    break;
+                case 3:
+                    ListOrderProduct = ListOrderProduct.Where(x => x.Orderproducts
+                    .Sum(x => x.ProductarticlenumberNavigation.Productdiscountamount) >= dis4).ToList();
+                    break;
+            }
+        }       
     }
 }
