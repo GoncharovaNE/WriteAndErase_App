@@ -126,7 +126,7 @@
 - **Перейдите** на сайт по ссылке: **https://github.com/GoncharovaNE/WriteAndErase_App.git**
 
 - **Скачайте** архивный файл (ZIP):
-<p><img src="image-1.png" width="40%"></p>
+<p><img src="image-1.png" width="30%"></p>
 
 - **Разархивируйте** скаченный файл, найдя файл **WriteAndErase_App.exe** в папке **net8.0** в архиве **bin** (его тоже нужно будет разархивировать) по следующему пути: **WriteAndErase_App >  bin > Debug > net8.0**, запустите приложение нажав два раза на файл **WriteAndErase_App.exe**.
 
