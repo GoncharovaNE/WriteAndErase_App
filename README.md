@@ -123,7 +123,7 @@
 ## Установка
 
 - **Откройте** один из браузеров: _Chrome_, _Opera_, _MicrosoftEdge_
-- **Перейдите** на сайт по ссылке: **http://gogs.ngknn.ru/GoncharovaNE33P/WriteAndErase_App.git**
+- **Перейдите** на сайт по ссылке: **https://github.com/GoncharovaNE/WriteAndErase_App.git**
 
 - **Скачайте** архивный файл (ZIP):
 <p><img src="image-1.png" width="40%"></p>
@@ -131,4 +131,4 @@
 - **Разархивируйте** скаченный файл, найдя файл **WriteAndErase_App.exe** в папке **net8.0** в архиве **bin** (его тоже нужно будет разархивировать) по следующему пути: **WriteAndErase_App >  bin > Debug > net8.0**, запустите приложение нажав два раза на файл **WriteAndErase_App.exe**.
 
 ## Авторы
-- **Гончарова Надежда** - главный разработчик - [Профиль с другими проектами](http://gogs.ngknn.ru:/GoncharovaNE33P) 
+- **Гончарова Надежда** - главный разработчик - [Профиль с другими проектами](https://github.com/GoncharovaNE)
